@@ -119,6 +119,30 @@ namespace AttendanceStudent.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StudentRollCalls",
+                columns: table => new
+                {
+                    RollCallId = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
+                    StudentId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentRollCalls", x => new { x.StudentId, x.RollCallId });
+                    table.ForeignKey(
+                        name: "FK_StudentRollCalls_RollCalls_RollCallId",
+                        column: x => x.RollCallId,
+                        principalTable: "RollCalls",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentRollCalls_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AttendanceLog_Images",
                 columns: table => new
                 {
@@ -219,6 +243,16 @@ namespace AttendanceStudent.Database.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StudentRollCalls_RollCallId",
+                table: "StudentRollCalls",
+                column: "RollCallId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentRollCalls_StudentId_RollCallId",
+                table: "StudentRollCalls",
+                columns: new[] { "StudentId", "RollCallId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Students_Email",
                 table: "Students",
                 column: "Email");
@@ -246,6 +280,9 @@ namespace AttendanceStudent.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "Student_Images");
+
+            migrationBuilder.DropTable(
+                name: "StudentRollCalls");
 
             migrationBuilder.DropTable(
                 name: "AttendanceLogs");
