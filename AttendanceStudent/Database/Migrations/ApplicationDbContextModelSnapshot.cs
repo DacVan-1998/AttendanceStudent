@@ -252,6 +252,23 @@ namespace AttendanceStudent.Database.Migrations
                     b.ToTable("Student_Images");
                 });
 
+            modelBuilder.Entity("AttendanceStudent.Models.StudentRollCall", b =>
+                {
+                    b.Property<byte[]>("StudentId")
+                        .HasColumnType("varbinary(16)");
+
+                    b.Property<byte[]>("RollCallId")
+                        .HasColumnType("varbinary(16)");
+
+                    b.HasKey("StudentId", "RollCallId");
+
+                    b.HasIndex("RollCallId");
+
+                    b.HasIndex("StudentId", "RollCallId");
+
+                    b.ToTable("StudentRollCalls");
+                });
+
             modelBuilder.Entity("AttendanceStudent.Models.Subject", b =>
                 {
                     b.Property<byte[]>("Id")
@@ -347,6 +364,25 @@ namespace AttendanceStudent.Database.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("AttendanceStudent.Models.StudentRollCall", b =>
+                {
+                    b.HasOne("AttendanceStudent.Models.RollCall", "RollCall")
+                        .WithMany("StudentRollCalls")
+                        .HasForeignKey("RollCallId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AttendanceStudent.Models.Student", "Student")
+                        .WithMany("StudentRollCalls")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RollCall");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("AttendanceStudent.Models.AttendanceLog", b =>
                 {
                     b.Navigation("AttendanceStudents");
@@ -359,9 +395,16 @@ namespace AttendanceStudent.Database.Migrations
                     b.Navigation("RollCalls");
                 });
 
+            modelBuilder.Entity("AttendanceStudent.Models.RollCall", b =>
+                {
+                    b.Navigation("StudentRollCalls");
+                });
+
             modelBuilder.Entity("AttendanceStudent.Models.Student", b =>
                 {
                     b.Navigation("AttendanceStudents");
+
+                    b.Navigation("StudentRollCalls");
                 });
 
             modelBuilder.Entity("AttendanceStudent.Models.Subject", b =>

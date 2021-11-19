@@ -13,5 +13,6 @@ namespace AttendanceStudent.Models
 
         public ICollection<StudentImage> Images = new List<StudentImage>();   
         public ICollection<AttendanceStudent> AttendanceStudents = new List<AttendanceStudent>();
+        public ICollection<StudentRollCall> StudentRollCalls = new List<StudentRollCall>();
     }
 }

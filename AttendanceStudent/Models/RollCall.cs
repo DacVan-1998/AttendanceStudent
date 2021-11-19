@@ -16,7 +16,8 @@ namespace AttendanceStudent.Models
         public Guid SubjectId { get; set; }
         public Subject? Subject { get; set; }
         
-        public ICollection<Student> Students = new List<Student>();
         public ICollection<AttendanceLog> AttendanceLogs = new List<AttendanceLog>();
+        public ICollection<StudentRollCall> StudentRollCalls = new List<StudentRollCall>();
+
     }
 }
