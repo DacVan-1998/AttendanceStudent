@@ -1,12 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AttendanceStudent.Class.Interfaces;
+using AttendanceStudent.Class.Repositories.Implements;
+using AttendanceStudent.Class.Repositories.Interfaces;
+using AttendanceStudent.Class.Services;
+using AttendanceStudent.Commons.ImplementInterfaces;
+using AttendanceStudent.Commons.Interfaces;
 using AttendanceStudent.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,8 +34,20 @@ namespace AttendanceStudent
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 string connectionString = Configuration.GetConnectionString("MySqlServerConnection");
-                options.UseMySQL(connectionString);
+                var serverVersion = ServerVersion.AutoDetect(connectionString);
+                options.UseMySql(connectionString, serverVersion)
+                    .LogTo(Console.WriteLine, LogLevel.Information)
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors();
             });
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>()!);
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IClassService, ClassService>();
+            services.AddScoped<IClassRepository, ClassRepository>();
+            services.AddScoped<IPaginationService, PaginationService>();
+            services.AddSingleton<IStringLocalizationService, StringLocalizationService>();
+            services.AddLocalization(option => { option.ResourcesPath = "Resources"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

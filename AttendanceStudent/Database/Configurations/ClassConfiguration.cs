@@ -1,12 +1,11 @@
-using AttendanceStudent.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AttendanceStudent.Database.Configurations
 {
-    public class ClassConfiguration : IEntityTypeConfiguration<Class>
+    public class ClassConfiguration : IEntityTypeConfiguration<Models.Class>
     {
-        public void Configure(EntityTypeBuilder<Class> builder)
+        public void Configure(EntityTypeBuilder<Models.Class> builder)
         {
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Id).ValueGeneratedOnAdd();

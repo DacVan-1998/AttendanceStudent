@@ -19,16 +19,15 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.AttendanceLog", b =>
                 {
-                    b.Property<byte[]>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("AttendanceDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<byte[]>("RollCallId")
-                        .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("RollCallId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -39,13 +38,12 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.AttendanceLogImage", b =>
                 {
-                    b.Property<byte[]>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("AttendanceLogId")
-                        .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("AttendanceLogId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
@@ -79,13 +77,12 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.AttendanceStudent", b =>
                 {
-                    b.Property<byte[]>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("AttendanceLogId")
-                        .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("AttendanceLogId")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("IsPresent")
                         .HasColumnType("tinyint(1)");
@@ -96,9 +93,8 @@ namespace AttendanceStudent.Database.Migrations
                         .IsUnicode(true)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<byte[]>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -111,13 +107,13 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.Class", b =>
                 {
-                    b.Property<byte[]>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -135,16 +131,15 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.RollCall", b =>
                 {
-                    b.Property<byte[]>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("ClassId")
-                        .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("ClassId")
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("FinishTime")
                         .IsRequired()
@@ -153,7 +148,7 @@ namespace AttendanceStudent.Database.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<DateTime>("FromDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("StartTime")
                         .IsRequired()
@@ -161,9 +156,8 @@ namespace AttendanceStudent.Database.Migrations
                         .IsUnicode(true)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<byte[]>("SubjectId")
-                        .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -176,9 +170,9 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.Student", b =>
                 {
-                    b.Property<byte[]>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -200,7 +194,7 @@ namespace AttendanceStudent.Database.Migrations
 
                     b.Property<string>("StudentCode")
                         .IsRequired()
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -214,9 +208,9 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.StudentImage", b =>
                 {
-                    b.Property<byte[]>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
@@ -239,9 +233,8 @@ namespace AttendanceStudent.Database.Migrations
                     b.Property<long>("Size")
                         .HasColumnType("bigint");
 
-                    b.Property<byte[]>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -254,11 +247,11 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.StudentRollCall", b =>
                 {
-                    b.Property<byte[]>("StudentId")
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("RollCallId")
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("RollCallId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("StudentId", "RollCallId");
 
@@ -271,13 +264,13 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.Subject", b =>
                 {
-                    b.Property<byte[]>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
