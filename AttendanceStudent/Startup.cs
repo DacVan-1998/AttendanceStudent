@@ -1,11 +1,19 @@
 using System;
+using System.Reflection;
+using System.Text.Json;
 using AttendanceStudent.Class.Interfaces;
 using AttendanceStudent.Class.Repositories.Implements;
 using AttendanceStudent.Class.Repositories.Interfaces;
 using AttendanceStudent.Class.Services;
+using AttendanceStudent.Commons.Filters;
 using AttendanceStudent.Commons.ImplementInterfaces;
 using AttendanceStudent.Commons.Interfaces;
 using AttendanceStudent.Database;
+using AttendanceStudent.Subject.Interfaces;
+using AttendanceStudent.Subject.Repositories.Implements;
+using AttendanceStudent.Subject.Repositories.Interfaces;
+using AttendanceStudent.Subject.Services;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +37,20 @@ namespace AttendanceStudent
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(
+                    options =>
+                    {
+                        // Generate ViewModel errors
+                        options.Filters.Add<ViewModelValidationFilter>();
+                    }
+                )
+                .AddFluentValidation(mvcConfiguration =>
+                    {
+                        // mvcConfiguration.RegisterValidatorsFromAssembly(typeof(AttendanceStudent.Startup)
+                        //     .GetTypeInfo().Assembly);
+                        mvcConfiguration.RegisterValidatorsFromAssemblyContaining(typeof(Startup));
+                    }
+                );
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "AttendanceStudent", Version = "v1"}); });
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -45,6 +66,8 @@ namespace AttendanceStudent
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IClassService, ClassService>();
             services.AddScoped<IClassRepository, ClassRepository>();
+            services.AddScoped<ISubjectRepository, SubjectRepository>();
+            services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IPaginationService, PaginationService>();
             services.AddSingleton<IStringLocalizationService, StringLocalizationService>();
             services.AddLocalization(option => { option.ResourcesPath = "Resources"; });

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AttendanceStudent.Class.Repositories.Implements;
 using AttendanceStudent.Class.Repositories.Interfaces;
 using AttendanceStudent.Commons.Interfaces;
+using AttendanceStudent.Subject.Repositories.Implements;
+using AttendanceStudent.Subject.Repositories.Interfaces;
 
 namespace AttendanceStudent.Commons.ImplementInterfaces
 {
@@ -11,11 +13,13 @@ namespace AttendanceStudent.Commons.ImplementInterfaces
     {
         private readonly IApplicationDbContext _applicationDbContext;
         public IClassRepository Classes { get; }
+        public ISubjectRepository Subjects { get; }
 
         public UnitOfWork(IApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
             Classes = new ClassRepository(_applicationDbContext);
+            Subjects = new SubjectRepository(_applicationDbContext);
         }
 
 

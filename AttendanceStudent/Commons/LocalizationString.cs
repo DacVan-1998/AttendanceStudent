@@ -73,6 +73,26 @@ namespace AttendanceStudent.Commons
             public const string RemovedCategoryFromTenant = "Removed Categories from Tenant {0}";
             public const string FailedToRemoveCategory = "Failed to remove Categories to Tenant {0}";
         }
-        
+        public static class Subject
+        {
+          
+            public const string Updated = "Updated Category {0}";
+            public const string NotFound = "Subject is not found or deleted";
+
+            public const string AlreadyDeleted = "Category is already deleted, you cannot delete it again";
+            public const string Deleted = "Deleted Category {0}";
+            public const string FailedToDelete = "Failed to delete Category {0}";
+            
+            public const string DuplicatedName = "Subject name is duplicated";
+            public const string DuplicatedCode = "Subject code is duplicated";
+
+            public const string FailedToAddCategory = "Failed to add Categories to Tenant {0}";
+            public const string AddedCategoryToTenant = "Added categories to Tenant {0}";
+            public const string AlreadyExisted = "Category {0} is already existed in categories list of Tenant, you cannot add it again";
+
+            public const string NotExist = "Categories {0} is not exist in categories list of Tenant, you cannot remove it";
+            public const string RemovedCategoryFromTenant = "Removed Categories from Tenant {0}";
+            public const string FailedToRemoveCategory = "Failed to remove Categories to Tenant {0}";
+        }
     }
 }
