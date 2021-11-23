@@ -7,57 +7,74 @@ namespace AttendanceStudent.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "Classes",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    Code = table.Column<string>(type: "varchar(767)", nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Code = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Classes", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Students",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    StudentCode = table.Column<string>(type: "varchar(767)", nullable: false),
-                    FullName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    Email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    StudentCode = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FullName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     PhoneNumber = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Students", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Subjects",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    Code = table.Column<string>(type: "varchar(767)", nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Code = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Subjects", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Student_Images",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    OriginalName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OriginalName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Size = table.Column<long>(type: "bigint", nullable: false),
-                    ContentType = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    StudentId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    ContentType = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StudentId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -68,19 +85,22 @@ namespace AttendanceStudent.Database.Migrations
                         principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "RollCalls",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    FromDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    StartTime = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    FinishTime = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    ClassId = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    SubjectId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    FromDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    StartTime = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FinishTime = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClassId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    SubjectId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -97,15 +117,16 @@ namespace AttendanceStudent.Database.Migrations
                         principalTable: "Subjects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AttendanceLogs",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    AttendanceDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    RollCallId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    AttendanceDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    RollCallId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -116,14 +137,15 @@ namespace AttendanceStudent.Database.Migrations
                         principalTable: "RollCalls",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "StudentRollCalls",
                 columns: table => new
                 {
-                    RollCallId = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    StudentId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    RollCallId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    StudentId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -140,18 +162,22 @@ namespace AttendanceStudent.Database.Migrations
                         principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AttendanceLog_Images",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    OriginalName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OriginalName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Size = table.Column<long>(type: "bigint", nullable: false),
-                    ContentType = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    AttendanceLogId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    ContentType = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AttendanceLogId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -162,17 +188,19 @@ namespace AttendanceStudent.Database.Migrations
                         principalTable: "AttendanceLogs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AttendanceStudents",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     IsPresent = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Note = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    AttendanceLogId = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    StudentId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    Note = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AttendanceLogId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    StudentId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -189,7 +217,8 @@ namespace AttendanceStudent.Database.Migrations
                         principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AttendanceLog_Images_AttendanceLogId",
