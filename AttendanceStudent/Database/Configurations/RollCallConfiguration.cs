@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AttendanceStudent.Database.Configurations
 {
-    public class RollCallConfiguration : IEntityTypeConfiguration<RollCall>
+    public class RollCallConfiguration : IEntityTypeConfiguration<Models.RollCall>
     {
-        public void Configure(EntityTypeBuilder<RollCall> builder)
+        public void Configure(EntityTypeBuilder<Models.RollCall> builder)
         {
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Id).ValueGeneratedOnAdd();

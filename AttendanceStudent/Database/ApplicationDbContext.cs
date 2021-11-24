@@ -16,7 +16,7 @@ namespace AttendanceStudent.Database
         public DbSet<Models.Subject> Subjects { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentImage> Images { get; set; }
-        public DbSet<RollCall> RollCalls { get; set; }
+        public DbSet<Models.RollCall> RollCalls { get; set; }
         public DbSet<Models.AttendanceStudent> AttendanceStudents { get; set; }
         public DatabaseFacade Database => base.Database;
 

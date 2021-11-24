@@ -19,7 +19,7 @@ namespace AttendanceStudent.Commons.Interfaces
         public DbSet<AttendanceStudent.Models.Subject> Subjects { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentImage> Images { get; set; }
-        public DbSet<RollCall> RollCalls { get; set; }
+        public DbSet<AttendanceStudent.Models.RollCall> RollCalls { get; set; }
         public DbSet<AttendanceStudent.Models.AttendanceStudent> AttendanceStudents { get; set; }
        
         #endregion
