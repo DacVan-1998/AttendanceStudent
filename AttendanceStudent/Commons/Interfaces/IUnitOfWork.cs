@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AttendanceStudent.Class.Repositories.Interfaces;
 using AttendanceStudent.RollCall.Repositories.Interfaces;
+using AttendanceStudent.Student.Repositories.Interfaces;
 using AttendanceStudent.Subject.Repositories.Interfaces;
 
 namespace AttendanceStudent.Commons.Interfaces
@@ -12,6 +13,7 @@ namespace AttendanceStudent.Commons.Interfaces
         IClassRepository Classes { get; }
         ISubjectRepository Subjects { get; }
         IRollCallRepository RollCalls { get; }
+        IStudentRepository Students { get; }
 
         Task<int> CompleteAsync(CancellationToken cancellationToken = default(CancellationToken));
     }

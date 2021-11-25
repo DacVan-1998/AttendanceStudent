@@ -79,6 +79,13 @@ namespace AttendanceStudent.Commons
             public const string DuplicatedName = "Subject name is duplicated";
             public const string DuplicatedCode = "Subject code is duplicated";
         }
+        public static class Student
+        {
+            public const string NotFound = "Student is not found or deleted";
+            public const string DuplicatedEmail = "Student email is duplicated";
+            public const string DuplicatedCode = "Student code is duplicated";
+            public const string DuplicatedPhoneNumber = "Student phone number is duplicated";
+        }
         
         public static class RollCall
         {

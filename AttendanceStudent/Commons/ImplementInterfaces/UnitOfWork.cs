@@ -6,6 +6,8 @@ using AttendanceStudent.Class.Repositories.Interfaces;
 using AttendanceStudent.Commons.Interfaces;
 using AttendanceStudent.RollCall.Repositories.Implements;
 using AttendanceStudent.RollCall.Repositories.Interfaces;
+using AttendanceStudent.Student.Repositories.Implements;
+using AttendanceStudent.Student.Repositories.Interfaces;
 using AttendanceStudent.Subject.Repositories.Implements;
 using AttendanceStudent.Subject.Repositories.Interfaces;
 
@@ -17,6 +19,7 @@ namespace AttendanceStudent.Commons.ImplementInterfaces
         public IClassRepository Classes { get; }
         public ISubjectRepository Subjects { get; }
         public IRollCallRepository RollCalls { get; }
+        public IStudentRepository Students { get; }
 
         public UnitOfWork(IApplicationDbContext applicationDbContext)
         {
@@ -24,6 +27,7 @@ namespace AttendanceStudent.Commons.ImplementInterfaces
             Classes = new ClassRepository(_applicationDbContext);
             Subjects = new SubjectRepository(_applicationDbContext);
             RollCalls = new RollCallRepository(_applicationDbContext);
+            Students = new StudentRepository(_applicationDbContext);
         }
 
 

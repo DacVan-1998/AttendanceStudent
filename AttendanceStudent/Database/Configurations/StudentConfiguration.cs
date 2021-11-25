@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AttendanceStudent.Database.Configurations
 {
-    public class StudentConfiguration: IEntityTypeConfiguration<Student>
+    public class StudentConfiguration: IEntityTypeConfiguration<Models.Student>
     {
-        public void Configure(EntityTypeBuilder<Student> builder)
+        public void Configure(EntityTypeBuilder<Models.Student> builder)
         {
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Id).ValueGeneratedOnAdd();
