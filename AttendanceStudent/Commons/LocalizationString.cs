@@ -34,6 +34,7 @@ namespace AttendanceStudent.Commons
         public static class File
         {
             public const string FailedToUpload = "Failed to upload file";
+            public const string NotFound = "File is not found";
             public const string FileNameIsTooLong = "File name is too long";
             public const string NotAllowedExtensions = "File extension is not allowed";
             public const string NotAllowedContentTypes = "File content type is not allowed";

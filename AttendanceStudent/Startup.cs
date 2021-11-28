@@ -1,6 +1,4 @@
 using System;
-using System.Reflection;
-using System.Text.Json;
 using AttendanceStudent.Class.Interfaces;
 using AttendanceStudent.Class.Repositories.Implements;
 using AttendanceStudent.Class.Repositories.Interfaces;
@@ -9,6 +7,11 @@ using AttendanceStudent.Commons.Filters;
 using AttendanceStudent.Commons.ImplementInterfaces;
 using AttendanceStudent.Commons.Interfaces;
 using AttendanceStudent.Database;
+using AttendanceStudent.Database.Configurations;
+using AttendanceStudent.File.Interfaces;
+using AttendanceStudent.File.Repositories.Implements;
+using AttendanceStudent.File.Repositories.Interfaces;
+using AttendanceStudent.File.Services;
 using AttendanceStudent.RollCall.Interfaces;
 using AttendanceStudent.RollCall.Repositories.Implements;
 using AttendanceStudent.RollCall.Repositories.Interfaces;
@@ -69,6 +72,9 @@ namespace AttendanceStudent
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             });
+
+            services.Configure<ResourceConfiguration>(Configuration.GetSection("ResourceConfigurations"));
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>()!);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -80,6 +86,8 @@ namespace AttendanceStudent
             services.AddScoped<IRollCallService, RollCallService>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IFileManagementService, FileManagementService>();
+            services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IPaginationService, PaginationService>();
             services.AddSingleton<IStringLocalizationService, StringLocalizationService>();
             services.AddLocalization(option => { option.ResourcesPath = "Resources"; });
