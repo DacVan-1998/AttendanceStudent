@@ -85,7 +85,8 @@ namespace AttendanceStudent.Commons
             public const string NotFound = "Student is not found or deleted";
             public const string DuplicatedEmail = "Student email is duplicated";
             public const string DuplicatedCode = "Student code is duplicated";
-            public const string DuplicatedPhoneNumber = "Student phone number is duplicated";
+            public const string DuplicatedPhoneNumber = "Student phone number is duplicated"; 
+            public const string Duplicated = "Category is duplicated";
         }
         
         public static class RollCall
@@ -93,6 +94,8 @@ namespace AttendanceStudent.Commons
             public const string NotFound = "Roll call is not found or deleted";
             public const string DuplicatedName = "Subject name is duplicated";
             public const string DuplicatedCode = "Subject code is duplicated";
+            public const string AlreadyExisted = "Student {0} is already existed in student list of Roll Call, you cannot add it again";
+            public const string NotExist = "Student {0} is not exist in students list of Roll Call, you cannot remove it";
         }
     }
 }

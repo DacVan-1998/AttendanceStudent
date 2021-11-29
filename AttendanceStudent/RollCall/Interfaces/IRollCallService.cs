@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.DTO.Pagination.Requests;
@@ -52,6 +53,24 @@ namespace AttendanceStudent.RollCall.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<Result<PaginationBaseResponse<ViewRollCallResponse>>> ViewListRollCallAsync(PaginationBaseRequest query, CancellationToken cancellationToken = default(CancellationToken));
+        
+        /// <summary>
+        /// Add Students to Roll Call 
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<ActionResult>> AddStudentToRollCallAsync(Guid rollCallId,AddStudentToRollCallRequest request, CancellationToken cancellationToken = default(CancellationToken));
+        
+        /// <summary>
+        /// Remove Students to Roll Call 
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<ActionResult>> RemoveStudentToRollCallAsync(Guid rollCallId,RemoveStudentToRollCallRequest request, CancellationToken cancellationToken = default(CancellationToken));
 
     }
 }

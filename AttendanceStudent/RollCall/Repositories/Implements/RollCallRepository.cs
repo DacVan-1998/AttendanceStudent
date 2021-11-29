@@ -24,6 +24,8 @@ namespace AttendanceStudent.RollCall.Repositories.Implements
             return await _applicationDbContext.RollCalls
                 .Include(rc => rc.Class)
                 .Include(rc => rc.Subject)
+                .Include(rc => rc.StudentRollCalls)
+                .ThenInclude(sc => sc.Student)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
@@ -33,9 +35,9 @@ namespace AttendanceStudent.RollCall.Repositories.Implements
             await Task.CompletedTask;
             var keyword = query.Keyword?.ToUpper() ?? string.Empty;
             return _applicationDbContext.RollCalls
-                .Include(rc=>rc.Class)
-                .Include(rc=>rc.Subject)
-                .Where(r => keyword.Length == 0 || r.Class.Code.Contains(keyword) || r.Subject.Code.Contains(keyword) )
+                .Include(rc => rc.Class)
+                .Include(rc => rc.Subject)
+                .Where(r => keyword.Length == 0 || r.Class.Code.Contains(keyword) || r.Subject.Code.Contains(keyword))
                 .AsSplitQuery();
         }
     }

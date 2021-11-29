@@ -1,8 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AttendanceStudent.Class.DTO.Requests;
-using AttendanceStudent.Class.Interfaces;
 using AttendanceStudent.RollCall.DTO.Requests;
 using AttendanceStudent.RollCall.Interfaces;
 using Infrastructure.Common.Responses;
@@ -135,6 +133,56 @@ namespace AttendanceStudent.Controllers
             try
             {
                 var result = await _rollCallService.ViewListRollCallAsync(paginationRequest, cancellationToken);
+                if (result.Succeeded)
+                    return Ok(new SuccessResponse(data: result.Data));
+                return Accepted(new FailureResponse(result.Errors));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Add Students to Roll Call
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="addStudentToRollCallRequest"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Student/{rollCallId}")]
+        public async Task<IActionResult> AddStudentToRollCallAsync(Guid rollCallId, AddStudentToRollCallRequest addStudentToRollCallRequest, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                var result = await _rollCallService.AddStudentToRollCallAsync(rollCallId, addStudentToRollCallRequest, cancellationToken);
+                if (result.Succeeded)
+                    return Ok(new SuccessResponse(data: result.Data));
+                return Accepted(new FailureResponse(result.Errors));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Remove Students to Roll Call
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="removeStudentToRollCallRequest"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("Student/{rollCallId}")]
+        public async Task<IActionResult> RemoveStudentToRollCallAsync(Guid rollCallId, RemoveStudentToRollCallRequest removeStudentToRollCallRequest, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                var result = await _rollCallService.RemoveStudentToRollCallAsync(rollCallId, removeStudentToRollCallRequest, cancellationToken);
                 if (result.Succeeded)
                     return Ok(new SuccessResponse(data: result.Data));
                 return Accepted(new FailureResponse(result.Errors));

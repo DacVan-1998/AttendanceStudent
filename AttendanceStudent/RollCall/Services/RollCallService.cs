@@ -10,6 +10,7 @@ using AttendanceStudent.Commons.DTO.Pagination.Responses;
 using AttendanceStudent.Commons.Extensions;
 using AttendanceStudent.Commons.Interfaces;
 using AttendanceStudent.Commons.Models;
+using AttendanceStudent.Models;
 using AttendanceStudent.RollCall.DTO.Requests;
 using AttendanceStudent.RollCall.DTO.Responses;
 using AttendanceStudent.RollCall.Interfaces;
@@ -171,6 +172,66 @@ namespace AttendanceStudent.RollCall.Services
                         }
                     }).ToList()
                 });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<Result<ActionResult>> AddStudentToRollCallAsync(Guid rollCallId, AddStudentToRollCallRequest request, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                // Get Tenant 
+                var rollCall = await _unitOfWork.RollCalls.GetRollCallByIdAsync(rollCallId, cancellationToken);
+                if (rollCall == null)
+                    return Result<ActionResult>.Fail(LocalizationString.Common.ItemNotFound.ToErrors(_localizationService));
+
+                //Check input students list must not be existed in students list of roll call in the db
+                foreach (var item in request.Students.Where(item => rollCall.StudentRollCalls.Any(x => x.StudentId == item)))
+                    return Result<ActionResult>.Fail(string.Format(LocalizationString.RollCall.AlreadyExisted, item).ToErrors(_localizationService));
+
+                foreach (var item in request.Students)
+                {
+                    rollCall.StudentRollCalls.Add(new StudentRollCall()
+                    {
+                        StudentId = item,
+                        RollCallId = rollCallId
+                    });
+                }
+
+                _unitOfWork.RollCalls.Update(rollCall);
+                var result = await _unitOfWork.CompleteAsync(cancellationToken);
+                return result > 0 ? Result<ActionResult>.Succeed() : Result<ActionResult>.Fail(Constants.CannotFinishRequest);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<Result<ActionResult>> RemoveStudentToRollCallAsync(Guid rollCallId, RemoveStudentToRollCallRequest request, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                // Get Roll Call 
+                var rollCall = await _unitOfWork.RollCalls.GetRollCallByIdAsync(rollCallId, cancellationToken);
+                if (rollCall == null)
+                    return Result<ActionResult>.Fail(LocalizationString.Common.ItemNotFound.ToErrors(_localizationService));
+                
+                //Check input categories list must not be existed in categories list of tenant in the db
+                foreach (var item in request.Students.Where(item => rollCall.StudentRollCalls.All(x => x.StudentId != item)))
+                    return Result<ActionResult>.Fail(string.Format(LocalizationString.RollCall.NotExist, item).ToErrors(_localizationService));
+
+                foreach (var item in request.Students)
+                    rollCall.StudentRollCalls.Remove(rollCall.StudentRollCalls.First(x => x.RollCallId == rollCall.Id && x.StudentId == item));
+
+                _unitOfWork.RollCalls.Update(rollCall);
+                var result = await _unitOfWork.CompleteAsync(cancellationToken);
+                return result > 0 ? Result<ActionResult>.Succeed() : Result<ActionResult>.Fail(Constants.CannotFinishRequest);
             }
             catch (Exception e)
             {

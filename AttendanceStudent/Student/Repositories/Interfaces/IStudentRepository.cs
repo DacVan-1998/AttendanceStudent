@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -67,7 +68,6 @@ namespace AttendanceStudent.Student.Repositories.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<bool> IsDuplicatedPhoneNumberAsync(Guid studentId,string phoneNumber, CancellationToken cancellationToken = default(CancellationToken));
-
         
         /// <summary>
         /// Search for subject by its name
@@ -76,6 +76,8 @@ namespace AttendanceStudent.Student.Repositories.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<IQueryable<Models.Student>> SearchStudent(PaginationBaseRequest query, CancellationToken cancellationToken = default(CancellationToken));
+
+        Task<List<Models.Student>?> GetStudentsAsync(List<Guid> studentIds, CancellationToken cancellationToken = default(CancellationToken));
 
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,6 +62,12 @@ namespace AttendanceStudent.Student.Repositories.Implements
             return _applicationDbContext.Students
                 .Where(r => keyword.Length == 0 || r.StudentCode.Contains(keyword) || r.FullName.Contains(keyword))
                 .AsSplitQuery();
+        }
+
+        public async Task<List<Models.Student>?> GetStudentsAsync(List<Guid> studentIds, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await _applicationDbContext.Students.Where(r => studentIds.Contains(r.Id))
+                .AsSplitQuery().ToListAsync(cancellationToken);
         }
     }
 }
