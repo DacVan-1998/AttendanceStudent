@@ -80,6 +80,14 @@ namespace AttendanceStudent.Commons
             public const string DuplicatedName = "Subject name is duplicated";
             public const string DuplicatedCode = "Subject code is duplicated";
         }
+        
+        public static class AttendanceLog
+        {
+            public const string NotFound = "Attendance log is not found or deleted";
+            public const string DuplicatedName = "Subject name is duplicated";
+            public const string DuplicatedCode = "Subject code is duplicated";
+        }
+        
         public static class Student
         {
             public const string NotFound = "Student is not found or deleted";

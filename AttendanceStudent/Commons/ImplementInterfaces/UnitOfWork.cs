@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using AttendanceStudent.Attendance.Repositories.Implements;
+using AttendanceStudent.Attendance.Repositories.Interfaces;
 using AttendanceStudent.Class.Repositories.Implements;
 using AttendanceStudent.Class.Repositories.Interfaces;
 using AttendanceStudent.Commons.Interfaces;
@@ -23,6 +25,7 @@ namespace AttendanceStudent.Commons.ImplementInterfaces
         public IRollCallRepository RollCalls { get; }
         public IStudentRepository Students { get; }
         public IFileRepository Files { get; }
+        public IAttendanceLogRepository AttendanceLogs { get; }
 
         public UnitOfWork(IApplicationDbContext applicationDbContext)
         {
@@ -32,6 +35,7 @@ namespace AttendanceStudent.Commons.ImplementInterfaces
             RollCalls = new RollCallRepository(_applicationDbContext);
             Students = new StudentRepository(_applicationDbContext);
             Files = new FileRepository(_applicationDbContext);
+            AttendanceLogs = new AttendanceLogRepository(_applicationDbContext);
         }
 
 

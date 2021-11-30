@@ -24,6 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Attendance\DTO\Responses" />
+      <Folder Include="Attendance\Validators" />
       <Folder Include="Database\Migrations" />
       <Folder Include="File\Validators" />
       <Folder Include="Resources\ExcelFiles\Export" />
