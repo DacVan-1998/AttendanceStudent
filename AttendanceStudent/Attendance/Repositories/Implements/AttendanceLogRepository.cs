@@ -21,7 +21,8 @@ namespace AttendanceStudent.Attendance.Repositories.Implements
         public async Task<AttendanceLog?> GetAttendanceLogByIdAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await _applicationDbContext.AttendanceLogs
-                .Include(al=>al.RollCall).ThenInclude(rc=>rc!.StudentRollCalls)
+                .Include(al=>al.RollCall)
+                .ThenInclude(rc=>rc!.StudentRollCalls)
                 .AsSplitQuery().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
     }

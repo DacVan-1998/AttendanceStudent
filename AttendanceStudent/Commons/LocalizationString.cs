@@ -103,7 +103,7 @@ namespace AttendanceStudent.Commons
             public const string DuplicatedName = "Subject name is duplicated";
             public const string DuplicatedCode = "Subject code is duplicated";
             public const string AlreadyExisted = "Student {0} is already existed in student list of Roll Call, you cannot add it again";
-            public const string NotExist = "Student {0} is not exist in students list of Roll Call, you cannot remove it";
+            public const string NotExist = "Student {0} is not exist in students list of Roll Call, you cannot attendance this student";
         }
     }
 }
