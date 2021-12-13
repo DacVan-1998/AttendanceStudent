@@ -1,8 +1,15 @@
 using System;
+using AttendanceStudent.Attendance.Interfaces;
+using AttendanceStudent.Attendance.Repositories.Implements;
+using AttendanceStudent.Attendance.Repositories.Interfaces;
+using AttendanceStudent.Attendance.Services;
+using AttendanceStudent.AttendanceLogImages.Repositories.Implements;
+using AttendanceStudent.AttendanceLogImages.Repositories.Interfaces;
 using AttendanceStudent.Class.Interfaces;
 using AttendanceStudent.Class.Repositories.Implements;
 using AttendanceStudent.Class.Repositories.Interfaces;
 using AttendanceStudent.Class.Services;
+using AttendanceStudent.Commons.FaceRecognizer;
 using AttendanceStudent.Commons.Filters;
 using AttendanceStudent.Commons.ImplementInterfaces;
 using AttendanceStudent.Commons.Interfaces;
@@ -65,9 +72,8 @@ namespace AttendanceStudent
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "AttendanceStudent", Version = "v1"}); });
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                string connectionString = Configuration.GetConnectionString("MySqlServerConnection");
-                var serverVersion = ServerVersion.AutoDetect(connectionString);
-                options.UseMySql(connectionString, serverVersion)
+                string connectionString = Configuration.GetConnectionString("SqlServerConnection");
+                options.UseSqlServer(connectionString)
                     .LogTo(Console.WriteLine, LogLevel.Information)
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
@@ -89,6 +95,11 @@ namespace AttendanceStudent
             services.AddScoped<IFileManagementService, FileManagementService>();
             services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IPaginationService, PaginationService>();
+            services.AddScoped<IAttendanceLogImageRepository, AttendanceLogImageRepository>();
+            services.AddScoped<IAttendanceService, AttendanceStudentService>();
+            services.AddScoped<IAttendanceLogRepository, AttendanceLogRepository>();
+            services.AddScoped<IRecognizerEngine, RecognizerEngine>();
+            
             services.AddSingleton<IStringLocalizationService, StringLocalizationService>();
             services.AddLocalization(option => { option.ResourcesPath = "Resources"; });
         }

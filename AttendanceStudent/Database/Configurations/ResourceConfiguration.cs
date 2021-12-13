@@ -8,6 +8,9 @@ namespace AttendanceStudent.Database.Configurations
     public class ResourceConfiguration
     {
         public string UploadFolderPath { get; set; }
+        public string FaceLoad { get; set; }
+        public string UploadAttendanceImageFolderPath { get; set; }
+        public string UploadTemporaryStudentImageFolderPath { get; set; }
         public int MaxFileSize { get; set; }
         public List<string> AllowedExtensions { get; set; }
         public List<string> AllowedContentTypes { get; set; }

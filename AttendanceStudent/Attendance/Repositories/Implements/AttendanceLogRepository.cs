@@ -25,5 +25,13 @@ namespace AttendanceStudent.Attendance.Repositories.Implements
                 .ThenInclude(rc=>rc!.StudentRollCalls)
                 .AsSplitQuery().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
+
+        public async Task<AttendanceLog?> GetAttendanceLogByDateAsync(string dateTime, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await _applicationDbContext.AttendanceLogs
+                .Include(al=>al.RollCall)
+                .ThenInclude(rc=>rc!.StudentRollCalls)
+                .AsSplitQuery().FirstOrDefaultAsync(r => r.AttendanceDate == dateTime, cancellationToken);
+        }
     }
 }

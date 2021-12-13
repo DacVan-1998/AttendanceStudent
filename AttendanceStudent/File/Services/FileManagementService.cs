@@ -89,10 +89,6 @@ namespace AttendanceStudent.File.Services
                 // Save to the server disk
                 foreach (var (formFile, file) in resources)
                 {
-                    var path = Path.Combine(_resourceConfiguration.UploadFolderPath, file.Name);
-                    await using var stream = new FileStream(path, FileMode.Create);
-                    await formFile.CopyToAsync(stream, cancellationToken); //save the file
-                    stream.Close();
                     response.UploadedFiles.Add(new ViewFileResponse()
                     {
                         Id = file.Id,

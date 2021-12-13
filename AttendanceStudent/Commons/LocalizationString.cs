@@ -84,6 +84,7 @@ namespace AttendanceStudent.Commons
         public static class AttendanceLog
         {
             public const string NotFound = "Attendance log is not found or deleted";
+            public const string AlreadyExisted = "Attendance log is already existed today";
             public const string DuplicatedName = "Subject name is duplicated";
             public const string DuplicatedCode = "Subject code is duplicated";
         }

@@ -1,17 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AttendanceStudent.Commons;
 using AttendanceStudent.Commons.Extensions;
+using AttendanceStudent.Commons.FaceRecognizer;
 using AttendanceStudent.Commons.Interfaces;
+using AttendanceStudent.Database.Configurations;
 using AttendanceStudent.File.Interfaces;
+using AttendanceStudent.Models;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 using Infrastructure.Common.Responses;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Utils = AttendanceStudent.Commons.Utils;
 
 #pragma warning disable 1591
@@ -25,12 +32,20 @@ namespace AttendanceStudent.Controllers
         private readonly IStringLocalizationService _localizationService;
         private readonly ILogger<FileController> _logger;
         private readonly IFileManagementService _fileManagementService;
+        private readonly IOptions<ResourceConfiguration> _resourceConfiguration;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRecognizerEngine _recognizerEngine;
 
-        public FileController(ILogger<FileController> logger, IFileManagementService fileManagementService, IStringLocalizationService localizationService)
+        public FileController(ILogger<FileController> logger, IFileManagementService fileManagementService, IStringLocalizationService localizationService, IOptions<ResourceConfiguration> resourceConfiguration, IWebHostEnvironment webHostEnvironment, IUnitOfWork unitOfWork, IRecognizerEngine recognizerEngine)
         {
             _logger = logger;
             _fileManagementService = fileManagementService;
             _localizationService = localizationService;
+            _webHostEnvironment = webHostEnvironment;
+            _unitOfWork = unitOfWork;
+            _recognizerEngine = recognizerEngine;
+            _resourceConfiguration = resourceConfiguration;
         }
 
         /// <summary>
@@ -142,15 +157,36 @@ namespace AttendanceStudent.Controllers
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 if (files == null || files.Count == 0)
                     return Accepted(new FailureResponse("File(s) is empty".ToErrors(_localizationService)));
-                var resources = files.ToDictionary(file => file, file => new Models.StudentImage()
+
+                var resources = new Dictionary<IFormFile, StudentImage>();
+                foreach (var file in files)
                 {
-                    Id = Guid.NewGuid(),
-                    Name = $"{Guid.NewGuid()}-{Utils.File.GenerateFileName(Path.GetFileNameWithoutExtension(file.FileName))}{Path.GetExtension(file.FileName)}",
-                    Size = file.Length,
-                    ContentType = file.ContentType,
-                    OriginalName = file.FileName,
-                    StudentId = studentId
-                });
+                    var path = Path.Combine(_resourceConfiguration.Value.UploadTemporaryStudentImageFolderPath, file.FileName);
+                    await using var stream = new FileStream(path, FileMode.Create);
+                    await file.CopyToAsync(stream, cancellationToken); //save the file
+                    stream.Close();
+
+                    var imageAttendance = new Image<Bgr, byte>(path);
+                    var faceDetection = _recognizerEngine.Detection(imageAttendance);
+                    if (faceDetection.Length > 1 || faceDetection.Length < 1)
+                        return Accepted(new FailureResponse("There is 0 or more than 1 face in the uploaded image".ToErrors(_localizationService)));
+
+                    var fileName = $"{Guid.NewGuid()}-{Utils.File.GenerateFileName(Path.GetFileNameWithoutExtension(file.FileName))}{Path.GetExtension(file.FileName)}";
+                    var realPath = Path.Combine(_resourceConfiguration.Value.UploadFolderPath, fileName);
+                    var face = faceDetection[0];
+                    imageAttendance.ROI = face;
+                    imageAttendance.Resize(200, 200, Inter.Cubic).Save(realPath);
+
+                    resources.Add(file, new StudentImage()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = fileName,
+                        Size = imageAttendance.Data.Length,
+                        ContentType = file.ContentType,
+                        OriginalName = file.FileName,
+                        StudentId = studentId
+                    });
+                }
 
                 var result = await _fileManagementService.UploadFilesAsync(resources, cancellationToken);
                 if (result.Succeeded)

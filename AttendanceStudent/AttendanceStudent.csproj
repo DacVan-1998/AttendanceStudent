@@ -6,6 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Emgu.CV" Version="4.5.1.4349" />
+        <PackageReference Include="Emgu.CV.runtime.windows" Version="4.5.1.4349" />
+        <PackageReference Include="EmguCV" Version="3.1.0.1" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="10.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
@@ -13,6 +16,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.7">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,9 +31,12 @@
       <Folder Include="Attendance\Validators" />
       <Folder Include="Database\Migrations" />
       <Folder Include="File\Validators" />
+      <Folder Include="Resources\AttendanceLogImages" />
       <Folder Include="Resources\ExcelFiles\Export" />
       <Folder Include="Resources\ExcelFiles\Upload" />
+      <Folder Include="Resources\FaceLoad" />
       <Folder Include="Resources\StudentImages" />
+      <Folder Include="Resources\TemporaryStudentImages" />
     </ItemGroup>
 
 </Project>
