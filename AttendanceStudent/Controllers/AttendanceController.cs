@@ -129,13 +129,13 @@ namespace AttendanceStudent.Controllers
                 throw;
             }
         }
-
-
+        
         /// <summary>
         /// Create attendance log with attendance log image
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [Route("AttendanceStudent")]
         [Produces("application/json")]
         public async Task<IActionResult> AttendanceStudentsAsync([FromQuery] Guid attendanceLogId, CreateAttendanceStudentsRequest request, CancellationToken cancellationToken)
         {

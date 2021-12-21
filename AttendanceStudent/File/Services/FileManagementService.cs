@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Models;
@@ -89,6 +88,10 @@ namespace AttendanceStudent.File.Services
                 // Save to the server disk
                 foreach (var (formFile, file) in resources)
                 {
+                    var path = Path.Combine(_resourceConfiguration.UploadFolderPath, file.Name);
+                    await using var stream = new FileStream(path, FileMode.Create);
+                    await formFile.CopyToAsync(stream, cancellationToken); //save the file
+                    stream.Close();
                     response.UploadedFiles.Add(new ViewFileResponse()
                     {
                         Id = file.Id,
@@ -155,6 +158,37 @@ namespace AttendanceStudent.File.Services
                 // Allow browser to know len of file
                 var result = new PhysicalFileResult(filePath, resource.ContentType) {EnableRangeProcessing = true, FileDownloadName = resource.OriginalName};
                 return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<Result<List<ViewStudentImageResponse>>> GetStudentImagesAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Find resource by name in the db
+                var resource = await _unitOfWork.Files.GetAllFileAsync(cancellationToken);
+                var result = resource.GroupBy(r => r.Student, (k, c) => new ViewStudentImageResponse()
+                {
+                    StudentId = k.Id,
+                    StudentName = k.FullName,
+                    DictionaryPath =  Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath),
+                    StudentImagePaths = c.Select(cs => Path.Combine("https://localhost:5001/File/", cs.Name)).ToList()
+                }).ToList();
+
+                // Make sure file is existed, if not PhysicalFileResult with throw exception which we cannot catch in this code block due to Middleware is handling itself.
+                foreach (var item in resource)
+                {
+                    var path = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath, item.Name);
+                    if (!System.IO.File.Exists(path))
+                        Result<List<ViewStudentImageResponse>>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
+                }
+                
+                return Result<List<ViewStudentImageResponse>>.Succeed(result);
             }
             catch (Exception e)
             {

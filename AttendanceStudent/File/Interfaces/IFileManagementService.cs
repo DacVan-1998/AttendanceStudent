@@ -36,6 +36,12 @@ namespace AttendanceStudent.File.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns>PhysicalFileResult</returns>
         Task<PhysicalFileResult?> ServeFileAsync(string fileName, CancellationToken cancellationToken);
-
+        
+        /// <summary>
+        /// Get Student image and filter by student Id id
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>ResourceResult</returns>
+        Task<Result<List<ViewStudentImageResponse>>> GetStudentImagesAsync(CancellationToken cancellationToken);
     }
 }

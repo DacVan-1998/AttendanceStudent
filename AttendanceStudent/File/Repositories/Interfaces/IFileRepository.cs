@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AttendanceStudent.Commons.Interfaces;
@@ -23,6 +24,13 @@ namespace AttendanceStudent.File.Repositories.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<StudentImage?> GetFileByNameAsync(string name, CancellationToken cancellationToken = default(CancellationToken));
+        
+        /// <summary>
+        /// Get all file
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<List<StudentImage>> GetAllFileAsync(CancellationToken cancellationToken = default(CancellationToken));
 
     }
 }

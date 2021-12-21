@@ -161,27 +161,12 @@ namespace AttendanceStudent.Controllers
                 var resources = new Dictionary<IFormFile, StudentImage>();
                 foreach (var file in files)
                 {
-                    var path = Path.Combine(_resourceConfiguration.Value.UploadTemporaryStudentImageFolderPath, file.FileName);
-                    await using var stream = new FileStream(path, FileMode.Create);
-                    await file.CopyToAsync(stream, cancellationToken); //save the file
-                    stream.Close();
-
-                    var imageAttendance = new Image<Bgr, byte>(path);
-                    var faceDetection = _recognizerEngine.Detection(imageAttendance);
-                    if (faceDetection.Length > 1 || faceDetection.Length < 1)
-                        return Accepted(new FailureResponse("There is 0 or more than 1 face in the uploaded image".ToErrors(_localizationService)));
-
                     var fileName = $"{Guid.NewGuid()}-{Utils.File.GenerateFileName(Path.GetFileNameWithoutExtension(file.FileName))}{Path.GetExtension(file.FileName)}";
-                    var realPath = Path.Combine(_resourceConfiguration.Value.UploadFolderPath, fileName);
-                    var face = faceDetection[0];
-                    imageAttendance.ROI = face;
-                    imageAttendance.Resize(200, 200, Inter.Cubic).Save(realPath);
-
                     resources.Add(file, new StudentImage()
                     {
                         Id = Guid.NewGuid(),
                         Name = fileName,
-                        Size = imageAttendance.Data.Length,
+                        Size = file.Length,
                         ContentType = file.ContentType,
                         OriginalName = file.FileName,
                         StudentId = studentId
@@ -221,6 +206,29 @@ namespace AttendanceStudent.Controllers
             catch (Exception e)
             {
                 _logger.LogCritical(e, "DeleteResourceAsync");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// To get all student images filter by student id
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetAllStudentImages")]
+        public async Task<IActionResult> GetAllStudentImagesAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _fileManagementService.GetStudentImagesAsync(cancellationToken);
+                if (result.Succeeded)
+                    return Ok(result);
+                return Accepted(new FailureResponse(result.Errors));
+            }
+            catch (Exception e)
+            {
+                _logger.LogCritical(e, "GetAllStudentImagesAsync");
                 throw;
             }
         }

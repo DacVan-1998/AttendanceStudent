@@ -79,6 +79,18 @@ namespace AttendanceStudent
                     .EnableDetailedErrors();
             });
 
+            services.AddCors(options =>
+            {
+                // options.AddPolicy(name: AllowSpecificOrigins,
+                //     builder =>
+                //     {
+                //         builder.WithOrigins("*");
+                //     });
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials(); // allow any host, but should be update as production env
+                });
+            });
             services.Configure<ResourceConfiguration>(Configuration.GetSection("ResourceConfigurations"));
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -119,6 +131,7 @@ namespace AttendanceStudent
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseCors();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
