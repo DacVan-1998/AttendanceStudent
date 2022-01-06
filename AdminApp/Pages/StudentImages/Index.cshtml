@@ -1,0 +1,116 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Quản lý ảnh sinh viên </h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item">
+            <a href="/">Trang chủ</a>
+        </li>
+        <li class="breadcrumb-item active">Sinh viên</li>
+        <li class="breadcrumb-item active">Ảnh sinh viên</li>
+    </ol>
+    <div class="card mb-12">
+        <div class="card-header" id="title-student-image">
+            Image Data
+        </div>
+        <div class="card-body">
+            <div id="pop-images">
+            </div>
+        </div>
+    </div>
+    <div class="card mb-12">
+        <div class="card-header">
+            Upload
+        </div>
+        <div class="card-body display-flex" >
+            <div style="margin-right: 20px" class="custom-file">
+                <input class="form-control" type="file" id="formFileMultiple" multiple>
+            </div>
+            <button type="button" name="submit" class="btn btn-success btn-block" id="btnUploadFile" onclick="uploadFile()">
+                Upload Files
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+//Load Data in Table when documents is ready
+$(document).ready(function () {
+     loadStudentImages();
+});
+
+function loadStudentImages() {
+    const studentId = @Html.Raw(Json.Serialize(Model));
+    console.log(studentId);
+    $.ajax({
+        url: "https://localhost:5001/File/StudentImages/"+studentId,
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            var html = '';
+            console.log(data);
+            $.each(data.data.studentImages, function (key, item) {
+                html += '<div class="image">';
+                html += '<img class="btn-delete" onclick="deleteStudentImage(\''+item.id+'\')" src="/icon/DeleteImageIcon.png" alt=""/>';
+                html += '<img title="abc" id="image-student" src=\'' + item.path + '\' alt=""/>';
+                html += '</div>' ;            
+            });
+            $('#pop-images').html(html);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//function for deleting employee's record
+function deleteStudentImage(imageId) {
+    const ans = confirm("Are you sure you want to delete this Record?");
+    if (ans) {
+        $.ajax({
+        url: "https://localhost:5001/File/" + imageId,
+            type: "DELETE",
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: function (result) {
+                loadStudentImages();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+}
+
+function uploadFile(){
+    const studentId = @Html.Raw(Json.Serialize(Model));
+    const files = $('#formFileMultiple').prop("files");
+    let formData = new FormData();
+    
+    for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+    }
+   
+    $.ajax({
+         url: "https://localhost:5001/File?studentId=" + studentId,
+         type: "POST",
+         dataType: "json",
+         data: formData,
+         contentType: false,
+         processData: false,
+         success: function(data){
+            loadStudentImages()
+         },
+         error: function (data) {
+    
+         }
+    })
+}
+</script>

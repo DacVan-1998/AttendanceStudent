@@ -232,5 +232,29 @@ namespace AttendanceStudent.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// To get all student images by student id
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("StudentImages/{studentId}")]
+        public async Task<IActionResult> GetStudentImagesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _fileManagementService.GetStudentImagesByStudentIdAsync(studentId,cancellationToken);
+                if (result.Succeeded)
+                    return Ok(result);
+                return Accepted(new FailureResponse(result.Errors));
+            }
+            catch (Exception e)
+            {
+                _logger.LogCritical(e, "GetStudentImagesByStudentIdAsync");
+                throw;
+            }
+        }
     }
 }

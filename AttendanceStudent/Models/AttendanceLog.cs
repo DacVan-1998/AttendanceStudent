@@ -6,7 +6,8 @@ namespace AttendanceStudent.Models
     public class AttendanceLog
     {
         public Guid Id { get; set; }
-        public string AttendanceDate { get; set; }
+        public DateTime AttendanceDate { get; set; }
+        public string AttendanceTime { get; set; }
         public Guid RollCallId { get; set; }
         public RollCall? RollCall { get; set; }
         

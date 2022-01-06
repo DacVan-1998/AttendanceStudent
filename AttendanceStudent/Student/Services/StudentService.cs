@@ -151,6 +151,7 @@ namespace AttendanceStudent.Student.Services
                         FullName = r.FullName,
                         Email = r.Email,
                         PhoneNumber = r.PhoneNumber,
+                        TotalImages = r.Images.Count
                     }).ToList()
                 });
             }

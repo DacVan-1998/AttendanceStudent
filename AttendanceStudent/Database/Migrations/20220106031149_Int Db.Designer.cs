@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AttendanceStudent.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211209162732_UpdateColumDateTime")]
-    partial class UpdateColumDateTime
+    [Migration("20220106031149_Int Db")]
+    partial class IntDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,7 +27,10 @@ namespace AttendanceStudent.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AttendanceDate")
+                    b.Property<DateTime>("AttendanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AttendanceTime")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -82,8 +85,7 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.AttendanceStudent", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AttendanceLogId")
@@ -98,14 +100,11 @@ namespace AttendanceStudent.Database.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
+                    b.HasKey("StudentId", "AttendanceLogId");
 
                     b.HasIndex("AttendanceLogId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("StudentId", "AttendanceLogId");
 
                     b.ToTable("AttendanceStudents");
                 });
@@ -146,20 +145,8 @@ namespace AttendanceStudent.Database.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FinishTime")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<DateTime>("FromDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("StartTime")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("SubjectId")
                         .HasColumnType("uniqueidentifier");
@@ -354,7 +341,7 @@ namespace AttendanceStudent.Database.Migrations
             modelBuilder.Entity("AttendanceStudent.Models.StudentImage", b =>
                 {
                     b.HasOne("AttendanceStudent.Models.Student", "Student")
-                        .WithMany()
+                        .WithMany("Images")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -401,6 +388,8 @@ namespace AttendanceStudent.Database.Migrations
             modelBuilder.Entity("AttendanceStudent.Models.Student", b =>
                 {
                     b.Navigation("AttendanceStudents");
+
+                    b.Navigation("Images");
 
                     b.Navigation("StudentRollCalls");
                 });

@@ -40,8 +40,6 @@ namespace AttendanceStudent.RollCall.Services
                     Id = Guid.NewGuid(),
                     FromDate = request.FromDate,
                     EndDate = request.EndDate,
-                    StartTime = request.StartTime,
-                    FinishTime = request.FinishTime,
                     ClassId = request.ClassId,
                     SubjectId = request.SubjectId
                 };
@@ -66,8 +64,6 @@ namespace AttendanceStudent.RollCall.Services
 
                 existedRollCall.FromDate = request.FromDate;
                 existedRollCall.EndDate = request.EndDate;
-                existedRollCall.StartTime = request.StartTime;
-                existedRollCall.FinishTime = request.FinishTime;
                 existedRollCall.ClassId = request.ClassId;
                 existedRollCall.SubjectId = request.SubjectId;
 
@@ -114,8 +110,6 @@ namespace AttendanceStudent.RollCall.Services
                     Id = existedRollCall.Id,
                     FromDate = existedRollCall.FromDate.ToString("MM/dd/yyyy"),
                     EndDate = existedRollCall.EndDate.ToString("MM/dd/yyyy"),
-                    StartTime = existedRollCall.StartTime,
-                    FinishTime = existedRollCall.FinishTime,
                     Class = new ViewClassResponse()
                     {
                         Id = existedRollCall.Class?.Id ?? Guid.Empty,
@@ -156,8 +150,6 @@ namespace AttendanceStudent.RollCall.Services
                         Id = r.Id,
                         FromDate = r.FromDate.ToString("MM/dd/yyyy"),
                         EndDate = r.EndDate.ToString("MM/dd/yyyy"),
-                        StartTime = r.StartTime,
-                        FinishTime = r.FinishTime,
                         Class = new ViewClassResponse()
                         {
                             Id = r.Class?.Id ?? Guid.Empty,

@@ -30,6 +30,17 @@ namespace AttendanceStudent.RollCall.Repositories.Implements
                 .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
 
+        public async Task<Models.RollCall?> GetRollCallByClassAndSubjectAsync(Guid classId, Guid subjectId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await _applicationDbContext.RollCalls
+                .Include(rc => rc.Class)
+                .Include(rc => rc.Subject)
+                .Include(rc => rc.StudentRollCalls)
+                .ThenInclude(sc => sc.Student)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(r => r.ClassId == classId && r.SubjectId == subjectId, cancellationToken);
+        }
+
         public async Task<IQueryable<Models.RollCall>> SearchRollCall(PaginationBaseRequest query, CancellationToken cancellationToken = default(CancellationToken))
         {
             await Task.CompletedTask;

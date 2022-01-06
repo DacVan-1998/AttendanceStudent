@@ -37,7 +37,7 @@ namespace AttendanceStudent.Student.Repositories.Implements
 
         public async Task<Models.Student?> GetStudentByIdAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await _applicationDbContext.Students.AsSplitQuery().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+            return await _applicationDbContext.Students.Include(st => st.Images).AsSplitQuery().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
 
         public async Task<bool> IsDuplicatedCodeAsync(Guid studentId, string code, CancellationToken cancellationToken = default(CancellationToken))
@@ -60,6 +60,7 @@ namespace AttendanceStudent.Student.Repositories.Implements
             await Task.CompletedTask;
             var keyword = query.Keyword?.ToUpper() ?? string.Empty;
             return _applicationDbContext.Students
+                .Include(s => s.Images)
                 .Where(r => keyword.Length == 0 || r.StudentCode.Contains(keyword) || r.FullName.Contains(keyword))
                 .AsSplitQuery();
         }

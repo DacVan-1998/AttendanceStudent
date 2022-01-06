@@ -1,0 +1,178 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Quản lý ảnh sinh viên </h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item">
+            <a href="/">Trang chủ</a>
+        </li>
+        <li class="breadcrumb-item active">Sinh viên</li>
+        <li class="breadcrumb-item active">Ảnh sinh viên</li>
+    </ol>
+    <div class="card mb-12">
+        <div class="card-header" id="title-student-image">
+            Attendance
+        </div>
+        <div class="card-body">
+            <div>
+                <form class="display-flex">
+                    <div style="margin-right: 20px" class="form-group">
+                        <label>Class</label>
+                        <select class="form-select" id="classRoom">
+                        </select>
+                    </div>
+                    <div style="margin-right: 20px" class="form-group">
+                        <label>Subject</label>
+                        <select class="form-select" id="subject">
+                        </select>
+                    </div>
+                    <input id="attendanceDateUtc" name="date" type="hidden">
+                    <div style="margin-right: 20px" class="form-group">
+                        <label>From Date</label>
+                        <div class="input-group date" id="datePickerAttendance">
+                            <input type="text" class="form-control" id="dateAttendance">
+                            <span class="input-group-append">
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-calendar3"></i>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div style="margin-right: 20px" class="form-group">
+                        <label>Image for Attendance</label>
+                        <input class="form-control" type="file" id="imageAttendance">
+                    </div>
+                    <div style="margin-right: 20px" class="form-group">
+                        <label></label>
+                        <button type="button" name="submit" class="btn btn-success btn-block" id="btnUploadFile" onclick="attendance()">Attendance</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-12">
+        <div class="card-header">
+            Upload
+        </div>
+        <div class="card-body display-flex">
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+//Load Data in Table when documents is ready
+$(document).ready(function () {
+     $('#datePickerAttendance').datepicker({
+          todayBtn: "linked",
+          clearBtn: true,
+          todayHighlight: true,
+          autoclose	:true,
+     }).on('changeDate', function(e){
+          $('#attendanceDateUtc').val((e.format('yyyy-mm-ddT00:00:00.000Z'))); 
+     });
+    loadClass();
+    loadSubject();
+});
+
+function loadClass(){           
+     $.ajax({
+         url: "https://localhost:5001/Class/List?Page=1&Size=1000",
+         type: 'GET',
+         contentType: "application/json;charset=utf-8",
+         dataType: "json",
+         success: function(data) {
+             let html ='<option selected disabled>Please select class</option>';
+             $.each(data.data.result, function (key, item) {   
+                html += '<option value="'+item.id+'">'+item.code+'</option>';                  
+             });         
+             $("#classRoom").append(html);
+         }            
+     });
+}
+
+function loadSubject(){             
+     $.ajax({
+         url: "https://localhost:5001/Subject/List?Page=1&Size=1000",
+         type: 'GET',
+         contentType: "application/json;charset=utf-8",
+         dataType: "json",
+         success: function(data) {
+            let html ='<option selected disabled>Please select subject</option>';
+            $.each(data.data.result, function (key, item) {   
+                html += '<option value="'+item.id+'">'+item.code+'</option>';                  
+            });                        
+         $("#subject").append(html);
+         }            
+     });
+}
+
+function attendance(){ 
+    const classId = $("#classRoom option:selected").val();
+    const subjectId = $("#subject option:selected").val();
+    const attendanceDate = $("#dateAttendance").val()
+    const files = $('#formFileMultiple').prop("files");
+    let formData = new FormData();
+    formData.append("files", files[0]);
+
+    $.ajax({
+         url: "https://localhost:5001/Attendance?classId=" + classId+"&subjectId="+subjectId+"&attendanceDate="+attendanceDate,
+         type: "POST",
+         dataType: "json",
+         data: formData,
+         contentType: false,
+         processData: false,
+         success: function(data){
+             //Create attendance log success
+            if (data.data.status === "200"){
+                CallAttendanceStudentApi(data.data.attendanceLogId)
+            }
+         },
+         error: function (data) {
+            console.log("Something wrong")
+         }
+    })
+}
+
+function CallAttendanceStudentApi(attendanceLogId) {
+      $.ajax({
+             url: "https://localhost:5001/Attendance/AttendanceStudent?attendanceLogId="+attendanceLogId,
+             type: "POST",
+             dataType: "json",
+             data: formData,
+             contentType: false,
+             processData: false,
+             success: function(data){
+                 //Create attendance log success
+                if (data.data.status === "200"){
+                    CallAttendanceStudentApi()
+                }
+             },
+             error: function (data) {
+        
+             }
+        })
+}
+</script>
+<script>
+	$.ajax({
+		url: 'https://localhost:5001/File/GetAllStudentImages',
+		type: "GET",
+		dataType: "json",
+		data:{},
+		success: function (result) {
+			let parsed_data = JSON.parse(JSON.stringify(result))
+			init(parsed_data)
+        },
+        error: function (errormessage) {
+                alert(errormessage.responseText);
+        }	
+	})
+</script>
+<script src="/js/site.js"></script>

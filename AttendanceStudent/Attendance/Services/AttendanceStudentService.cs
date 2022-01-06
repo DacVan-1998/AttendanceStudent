@@ -13,7 +13,6 @@ using AttendanceStudent.Commons.Extensions;
 using AttendanceStudent.Commons.Interfaces;
 using AttendanceStudent.Commons.Models;
 using AttendanceStudent.Database.Configurations;
-using AttendanceStudent.File.DTO.Responses;
 using AttendanceStudent.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -34,19 +33,20 @@ namespace AttendanceStudent.Attendance.Services
         }
 
 
-        public async Task<Result<UploadAttendanceLogImageResponse>> CreateAttendanceLogAsync(Guid rollCallId, Dictionary<IFormFile, AttendanceLogImage> resources, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<Result<UploadAttendanceLogImageResponse>> CreateAttendanceLogAsync(Guid classId, Guid subjectId,DateTime attendanceDate,string lesson, Dictionary<IFormFile, AttendanceLogImage> resources, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
-                var existedRollCall = await _unitOfWork.RollCalls.GetRollCallByIdAsync(rollCallId, cancellationToken);
+                var existedRollCall = await _unitOfWork.RollCalls.GetRollCallByClassAndSubjectAsync(classId, subjectId, cancellationToken);
                 if (existedRollCall == null)
                     return Result<UploadAttendanceLogImageResponse>.Fail(LocalizationString.RollCall.NotFound.ToErrors(_localizationService));
-               
+
                 var attendanceLog = new AttendanceLog()
                 {
                     Id = Guid.NewGuid(),
-                    AttendanceDate = DateTime.Now.ToString("d"),
-                    RollCallId = rollCallId
+                    AttendanceDate = attendanceDate,
+                    AttendanceTime = lesson,
+                    RollCallId = existedRollCall.Id
                 };
                 var response = new UploadAttendanceLogImageResponse();
 
@@ -97,7 +97,7 @@ namespace AttendanceStudent.Attendance.Services
                 }
 
                 response.AttendanceLogId = attendanceLog.Id;
-                await _unitOfWork.AttendanceLogs.AddAsync(attendanceLog,cancellationToken);
+                await _unitOfWork.AttendanceLogs.AddAsync(attendanceLog, cancellationToken);
                 var result = await _unitOfWork.CompleteAsync(cancellationToken);
                 // Save log
                 return result <= 0 ? Result<UploadAttendanceLogImageResponse>.Fail(Constants.CannotFinishRequest) : Result<UploadAttendanceLogImageResponse>.Succeed(response);
@@ -126,7 +126,6 @@ namespace AttendanceStudent.Attendance.Services
                 {
                     var attendanceStudentCreateList = existedAttendanceLog.RollCall.StudentRollCalls.Select(item => new Models.AttendanceStudent()
                     {
-                        Id = Guid.NewGuid(),
                         AttendanceLogId = attendanceLogId,
                         StudentId = item.StudentId,
                         IsPresent = request.Students.Any(x => x == item.StudentId),
@@ -161,7 +160,6 @@ namespace AttendanceStudent.Attendance.Services
 
                 var attendanceStudentUpdateList = request.Students.Select(item => new Models.AttendanceStudent()
                 {
-                    Id = Guid.NewGuid(),
                     AttendanceLogId = existedAttendanceLog.Id,
                     StudentId = item.StudentId,
                     IsPresent = item.IsPresent,
@@ -189,28 +187,26 @@ namespace AttendanceStudent.Attendance.Services
                 if (existedAttendanceLog == null)
                     return Result<AttendanceLogResponse>.Fail(LocalizationString.AttendanceLog.NotFound.ToErrors(_localizationService));
 
+                var attendanceStudentList = new List<AttendanceStudentViewResponse>();
+                foreach (var item in existedAttendanceLog.AttendanceStudents)
+                {
+                    attendanceStudentList.Add(new AttendanceStudentViewResponse()
+                    {
+                        StudentId = item.StudentId,
+                        StudentName = item.Student?.FullName ?? string.Empty,
+                        IsPresent = item.IsPresent,
+                        Note = item.Note,
+                        Previous7DayStatus = await _unitOfWork.AttendanceLogs.GetPrevious7DayStatus(existedAttendanceLog.Id,item.StudentId,existedAttendanceLog.AttendanceDate,cancellationToken),
+                    });
+                }
+                
                 return Result<AttendanceLogResponse>.Succeed(new AttendanceLogResponse()
                 {
                     Id = existedAttendanceLog.Id,
-                    AttendanceDate = existedAttendanceLog.AttendanceDate,
-                    RollCallId = existedAttendanceLog.RollCallId,
-                    SubjectCode = existedAttendanceLog.RollCall?.Subject?.Code ?? string.Empty,
-                    ClassCode = existedAttendanceLog.RollCall?.Class?.Code ?? string.Empty,
-                    LogImages = (existedAttendanceLog.LogImages ?? new List<AttendanceLogImage>()).Select(li => new AttendanceLogImageViewResponse()
-                    {
-                        Id = li.Id,
-                        Name = li.Name,
-                        OriginalName = li.OriginalName,
-                        Size = li.Size,
-                        ContentType = li.ContentType
-                    }).ToList(),
-                    AttendanceStudents = existedAttendanceLog.AttendanceStudents.Select(at => new AttendanceStudentViewResponse()
-                    {
-                        StudentId = at.Id,
-                        StudentName = at.Student?.FullName ?? string.Empty,
-                        IsPresent = at.IsPresent,
-                        Note = at.Note,
-                    }).ToList()
+                    AttendanceDate = existedAttendanceLog.AttendanceDate.ToString("d"),
+                    AttendanceTime = existedAttendanceLog.AttendanceTime,
+                    LogImagePaths = (existedAttendanceLog.LogImages ?? new List<AttendanceLogImage>()).Select(li =>Path.Combine("https://localhost:5001/File/", li.Name)).ToList(),
+                    AttendanceStudents = attendanceStudentList,
                 });
             }
             catch (Exception e)

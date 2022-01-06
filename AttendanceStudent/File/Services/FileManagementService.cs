@@ -166,6 +166,47 @@ namespace AttendanceStudent.File.Services
             }
         }
 
+        public async Task<Result<ViewStudentImageByStudentIdResponse>> GetStudentImagesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Find resource by name in the db
+                var student = await _unitOfWork.Students.GetStudentByIdAsync(studentId, cancellationToken);
+                if (student == null)
+                    return Result<ViewStudentImageByStudentIdResponse>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
+
+                var result = new ViewStudentImageByStudentIdResponse()
+                {
+                    StudentId = studentId,
+                    StudentName = student.FullName,
+                    DictionaryPath = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath),
+                    StudentImages = student.Images.Select(cs => new ViewFileResponse()
+                    {
+                        Id = cs.Id,
+                        OriginalName = cs.OriginalName,
+                        Name = cs.OriginalName,
+                        ContentType = cs.ContentType,
+                        Size = cs.Size,
+                        Path = Path.Combine("https://localhost:5001/File/", cs.Name)
+                    }).ToList()
+                };
+
+                // Make sure file is existed, if not PhysicalFileResult with throw exception which we cannot catch in this code block due to Middleware is handling itself.
+                foreach (var path in student.Images.Select(item => Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath, item.Name)).Where(path => !System.IO.File.Exists(path)))
+                {
+                    Result<ViewStudentImageByStudentIdResponse>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
+                }
+
+                return Result<ViewStudentImageByStudentIdResponse>.Succeed(result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+
         public async Task<Result<List<ViewStudentImageResponse>>> GetStudentImagesAsync(CancellationToken cancellationToken)
         {
             try
@@ -176,7 +217,7 @@ namespace AttendanceStudent.File.Services
                 {
                     StudentId = k.Id,
                     StudentName = k.FullName,
-                    DictionaryPath =  Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath),
+                    DictionaryPath = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath),
                     StudentImagePaths = c.Select(cs => Path.Combine("https://localhost:5001/File/", cs.Name)).ToList()
                 }).ToList();
 
@@ -187,7 +228,7 @@ namespace AttendanceStudent.File.Services
                     if (!System.IO.File.Exists(path))
                         Result<List<ViewStudentImageResponse>>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
                 }
-                
+
                 return Result<List<ViewStudentImageResponse>>.Succeed(result);
             }
             catch (Exception e)

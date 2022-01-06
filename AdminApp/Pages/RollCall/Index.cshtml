@@ -1,0 +1,478 @@
+﻿@{
+    ViewBag.Title = "Roll Call Management";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Roll Call Management</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item">
+            <a href="/">Trang chủ</a>
+        </li>
+        <li class="breadcrumb-item active">Roll Call List</li>
+    </ol>
+    <div class="card mb-12">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Add</button>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-12 display-flex">
+                            <input style="margin-right: 10px" type="text" value="" name="keyword" id="ipSearch" class="form-control"/>
+                            <button style="margin-right: 10px" type="button" onclick="search()" class="btn btn-primary">Tìm</button>
+                            <button type="button" onclick="getPageData(1,10)" class="btn btn-dark">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            #
+                        </th>
+                        <th>
+                            Class
+                        </th>
+                        <th>
+                            Subject
+                        </th>
+                        <th>
+                            From Date
+                        </th>
+                        <th>
+                            End Date
+                        </th>
+                        <th>
+                            Time
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="tblData">
+
+                    </tbody>
+                </table>
+                <div id="pagination">
+
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Add or Update Roll Call</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group" id="divClassId">
+                                <label>Id</label>
+                                <input type="text" class="form-control" id="RollCallId" placeholder="Id"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Class</label>
+                                <select class="form-select" id="classRoom">
+
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <select class="form-select" id="subject">
+
+                                </select>
+                            </div>
+                            <input id="startDateUtc" name="date" type="hidden">
+                            <div class="form-group">
+                                <label>From Date</label>
+                                <div class="input-group date" id="datePickerStart">
+                                    <input type="text" class="form-control" id="startDate">
+                                    <span class="input-group-append">
+                                        <span class="input-group-text bg-white">
+                                            <i class="bi bi-calendar3"></i>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <input id="endDateUtc" name="date" type="hidden">
+                            <div class="form-group">
+                                <label>End Date</label>
+                                <div class="input-group date" id="datePickerEnd">
+                                    <input type="text" class="form-control" id="endDate">
+                                    <span class="input-group-append">
+                                        <span class="input-group-text bg-white">
+                                            <i class="bi bi-calendar3"></i>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Start Time</label>
+                                <input type="text" class="input-sm form-control" id="startTime"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Finish Time</label>
+                                <input type="text" class="input-sm form-control" id="finishTime"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Add</button>
+                        <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Update</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="hideDialog()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//Load Data in Table when documents is ready
+$(document).ready(function () {
+     $('#datePickerStart').datepicker({
+         todayBtn: "linked",
+         clearBtn: true,
+         todayHighlight: true,
+         autoclose	:true,
+     }).on('changeDate', function(e){
+         $('#startDateUtc').val((e.format('yyyy-mm-ddT00:00:00.000Z'))); 
+     });
+     
+     $('#datePickerEnd').datepicker({
+          todayBtn: "linked",
+          clearBtn: true,
+          todayHighlight: true,
+          autoclose	:true,
+     }).on('changeDate', function(e){
+          $('#endDateUtc').val((e.format('yyyy-mm-ddT00:00:00.000Z')));
+     });
+     //Initially load pagenumber=1
+     loadClass();
+     loadSubject();
+     getPageData(1,10);
+});
+
+function openDialogForAdd(){
+    $('#classRoom').val("");
+    $('#subject').val("");
+    $('#startTime').val("");
+    $('#finishTime').val("");
+    $('#btnUpdate').hide();
+    $('#btnAdd').show();
+    $('#classRoom').css('border-color', 'lightgrey');
+    $('#subject').css('border-color', 'lightgrey');
+    $('#startTime').css('border-color', 'lightgrey');
+    $('#finishTime').css('border-color', 'lightgrey');
+    $('#PhoneNumber').css('border-color', 'lightgrey');
+    $('#myModal').modal('show');
+    $('#divClassId').hide();
+}
+function hideDialog(){
+    $('#myModal').modal('hide');
+}
+//Load Data function
+function getPageData(pageNum, pageSize) {
+    $('#ipSearch').val("");
+    $("#tblData").empty();
+    $("#paged").empty();
+    $.ajax({
+        url: "https://localhost:5001/RollCall/List?Page="+pageNum+"&Size="+pageSize,
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            var html = '';
+            var count =0;
+            console.log(data);
+            $.each(data.data.result, function (key, item) {
+                count++;
+                html += '<tr>';
+                html += '<th scope="row">' + count + '</th>';
+                html += '<td>' + item.class.name + '</td>';
+                html += '<td>' + item.subject.name + '</td>';
+                html += '<td>' + item.fromDate + '</td>';
+                html += '<td>' + item.endDate + '</td>';
+                html += '<td>' + item.startTime + ' to '+item.finishTime+'</td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button>  | <button type="button" class="btn btn-danger" onclick="deleteRollCall(\''+item.id+'\')">Delete</button></td>';
+                html += '</tr>';
+            });
+            $('#tblData').html(html);
+            apply_pagination(data.data.totalPages);
+            // load_pagination(data.data.currentPage,data.data.totalPages);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//Search Data function
+function search() {
+    let keyword =  $('#ipSearch').val();
+    console.log(keyword);
+    $.ajax({
+        url: "https://localhost:5001/RollCall/List?&Keyword="+keyword+"&Page=1&Size=1000",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            var html = '';
+            var count =0;
+            console.log(data);
+            $.each(data.data.result, function (key, item) {
+                count++;
+                html += '<tr>';
+                html += '<th scope="row">' + count + '</th>';
+                html += '<td>' + item.class.name + '</td>';
+                html += '<td>' + item.subject.name + '</td>';
+                html += '<td>' + item.fromDate + '</td>';
+                html += '<td>' + item.endDate + '</td>';
+                html += '<td>' + item.startTime + ' to '+item.finishTime+'</td>';
+                html += '<td><a class="btn btn-success" href="RollCallDetail?RollCallId='+item.id+'" role="button">Link</a> | <button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button> | <button type="button" class="btn btn-danger" onclick="deleteRollCall(\''+item.id+'\')">Delete</button></td>';
+                html += '</tr>';
+            });
+            $('#tblData').html(html);
+            apply_pagination(data.data.totalPages);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+//Add Data Function
+function add() 
+{
+     let res = validate();
+     if (res === false) {
+           return false;
+     }
+     const classId = $("#classRoom option:selected").val();
+     const subjectId = $("#subject option:selected").val();
+     var rollCallObj = {
+           classId:classId,
+           subjectId: subjectId,
+           fromDate: $("#startDateUtc").val(),
+           endDate : $("#endDateUtc").val(),
+           startTime : $("#startTime").val(),
+           finishTime : $("#finishTime").val(),
+       };
+    $.ajax({
+        url: "https://localhost:5001/RollCall",
+        type: "POST",
+        data: JSON.stringify(rollCallObj),
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+             getPageData(1,10);
+             $('#myModal').modal('hide');     
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//Function for getting the Data Based upon Employee ID
+function getByID(rollCallId) {
+    console.log(rollCallId);
+    $.ajax({
+        url: "https://localhost:5001/RollCall/" + rollCallId,
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            $('#RollCallId').val(data.data.id);
+            $("#classRoom ").val(data.data.class.id);
+            $("#subject").val(data.data.subject.id);
+            $('#startDate').val(data.data.fromDate);
+            
+            fromDate_formatted = formatDate(data.data.fromDate);
+            $('#startDateUtc').val(fromDate_formatted);
+            console.log($('#startDateUtc').val());
+                        
+            $('#endDate').val(data.data.endDate);
+            endDate_formatted = formatDate(data.data.endDate);
+            $('#endDateUtc').val(endDate_formatted);
+            console.log($('#endDateUtc').val());
+                        
+            $('#startTime').val(data.data.startTime);
+            $('#finishTime').val(data.data.finishTime);
+            $('#myModal').modal('show');
+            $('#divClassId').hide();
+            $('#btnUpdate').show();
+            $('#btnAdd').hide();
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//function for updating employee's record
+function update() {
+    let res = validate();
+    if (res === false) {
+        return false;
+    }
+    console.log($("#startDateUtc").val());
+    console.log($("#endDateUtc").val());
+    const Id = $('#RollCallId').val();
+    var rollCallObj = {
+        classId: $("#classRoom option:selected").val(),
+        subjectId: $("#subject option:selected").val(),
+        fromDate: $("#startDateUtc").val(),
+        endDate : $("#endDateUtc").val(),
+        startTime : $("#startTime").val(),
+        finishTime : $("#finishTime").val(),
+    };
+    $.ajax({
+        url: "https://localhost:5001/RollCall/" + Id,
+        data: JSON.stringify(rollCallObj),
+        type: "PUT",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            getPageData(1,10);
+            $('#myModal').modal('hide');     
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//function for deleting employee's record
+function deleteRollCall(ID) {
+    var ans = confirm("Are you sure you want to delete this Record?");
+    if (ans) {
+        $.ajax({
+        url: "https://localhost:5001/RollCall/" + ID,
+            type: "DELETE",
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: function (result) {
+                getPageData(1,10);
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+}
+
+//Valdidation using jquery
+function validate() {
+    var isValid = true;
+    if ($('#startTime').val().trim() === "") {
+        $('#startTime').css('border-color', 'Red');
+        isValid = false;
+    }
+    else {
+        $('#startTime').css('border-color', 'lightgrey');
+    }
+    if ($('#finishTime').val().trim() === "") {
+        $('#finishTime').css('border-color', 'Red');
+        isValid = false;
+    }
+    else {
+        $('#finishTime').css('border-color', 'lightgrey');
+    }
+   
+    if ($('#endDate').val().trim() === "") {
+        $('#endDate').css('border-color', 'Red');
+            isValid = false;
+        }
+    else {
+        $('#endDate').css('border-color', 'lightgrey');
+    }
+     
+    if ($('#startDate').val().trim() === "") {
+        $('#startDate').css('border-color', 'Red');
+            isValid = false;
+    }
+    else {
+        $('#startDate').css('border-color', 'lightgrey');
+    }
+    
+     if ($('#subject').val() === "") {
+         $('#subject').css('border-color', 'Red');
+            isValid = false;
+     }
+     else {
+         $('#subject').css('border-color', 'lightgrey');
+     }
+     
+     if ($('#classRoom').val() === "") {
+          $('#classRoom').css('border-color', 'Red');
+              isValid = false;
+     }
+     else {
+          $('#classRoom').css('border-color', 'lightgrey');
+     }
+    return isValid;
+}
+
+// Paging with twbsPagination
+function apply_pagination(totalPages) {
+      $('#pagination').twbsPagination({
+            totalPages: totalPages,
+            visiblePages: 6,
+            onPageClick: function (event, page) {
+                 getPageData(page,10)     
+            }
+      });
+}
+
+function loadClass(){           
+     $.ajax({
+         url: "https://localhost:5001/Class/List?Page=1&Size=1000",
+         type: 'GET',
+         contentType: "application/json;charset=utf-8",
+         dataType: "json",
+         success: function(data) {
+             let html ='';
+             $.each(data.data.result, function (key, item) {   
+                html += '<option value="'+item.id+'">'+item.code+'</option>';                  
+             });         
+             $("#classRoom").append(html);
+         }            
+     });
+}
+
+function loadSubject(){             
+     $.ajax({
+         url: "https://localhost:5001/Subject/List?Page=1&Size=1000",
+         type: 'GET',
+         contentType: "application/json;charset=utf-8",
+         dataType: "json",
+         success: function(data) {
+            let html ='';
+            $.each(data.data.result, function (key, item) {   
+                html += '<option value="'+item.id+'">'+item.code+'</option>';                  
+            });                        
+         $("#subject").append(html);
+         }            
+     });
+}
+
+function formatDate(dateTime){
+     let fromDate = new Date(dateTime);
+     let date = "" ;
+     if ( fromDate.getDate() < 10 ) 
+         date = "0"+fromDate.getDate();
+     else 
+         date = fromDate.getDate();
+     
+     return fromDate.getFullYear() + "-" + (fromDate.getMonth() + 1) + "-" +date+"T00:00:00.000Z";     
+}
+</script>

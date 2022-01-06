@@ -63,6 +63,41 @@
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\assets\demo\chart-pie-demo.js" />
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\assets\demo\datatables-demo.js" />
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\assets\img\error-404-monochrome.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\css\styles.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.bundle.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.bundle.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.bundle.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.bundle.min.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.esm.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.esm.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.esm.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.esm.min.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.min.js.map" />
+      <_ContentIncludedByDefault Remove="Pages\Attendance\models\face_landmark_68_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="Pages\Attendance\models\face_recognition_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="Pages\Attendance\models\ssd_mobilenetv1_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="ModelTraining\face_landmark_68_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="ModelTraining\face_recognition_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="ModelTraining\ssd_mobilenetv1_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\models\face_landmark_68_model-shard1" />
+      <_ContentIncludedByDefault Remove="wwwroot\models\face_landmark_68_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\models\face_recognition_model-shard1" />
+      <_ContentIncludedByDefault Remove="wwwroot\models\face_recognition_model-shard2" />
+      <_ContentIncludedByDefault Remove="wwwroot\models\face_recognition_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\models\ssd_mobilenetv1_model-shard1" />
+      <_ContentIncludedByDefault Remove="wwwroot\models\ssd_mobilenetv1_model-shard2" />
+      <_ContentIncludedByDefault Remove="wwwroot\models\ssd_mobilenetv1_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\models\face_landmark_68_model-shard1" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\models\face_landmark_68_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\models\face_recognition_model-shard1" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\models\face_recognition_model-shard2" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\models\face_recognition_model-weights_manifest.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\models\ssd_mobilenetv1_model-shard1" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\models\ssd_mobilenetv1_model-shard2" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\models\ssd_mobilenetv1_model-weights_manifest.json" />
     </ItemGroup>
 
     <ItemGroup>

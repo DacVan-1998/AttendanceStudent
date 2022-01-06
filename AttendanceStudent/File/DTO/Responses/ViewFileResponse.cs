@@ -11,5 +11,6 @@ namespace AttendanceStudent.File.DTO.Responses
         public string Name { get; set; }
         public string ContentType { get; set; }
         public long Size { get; set; }
+        public string Path { get; set; } = "";
     }
 }

@@ -16,6 +16,15 @@ namespace AttendanceStudent.RollCall.Repositories.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<Models.RollCall?> GetRollCallByIdAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Get roll call by class id and subject id
+        /// </summary>
+        /// <param name="classId"></param>
+        /// <param name="subjectId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Models.RollCall?> GetRollCallByClassAndSubjectAsync(Guid classId, Guid subjectId, CancellationToken cancellationToken = default(CancellationToken));
         
         /// <summary>
         /// Search for roll call by its name
@@ -24,6 +33,5 @@ namespace AttendanceStudent.RollCall.Repositories.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<IQueryable<Models.RollCall>> SearchRollCall(PaginationBaseRequest query, CancellationToken cancellationToken = default(CancellationToken));
-
     }
 }

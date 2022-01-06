@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AttendanceStudent.Database.Migrations
 {
-    public partial class InitDb : Migration
+    public partial class IntDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -77,8 +77,6 @@ namespace AttendanceStudent.Database.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FromDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StartTime = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    FinishTime = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ClassId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -105,6 +103,7 @@ namespace AttendanceStudent.Database.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttendanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AttendanceTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RollCallId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -168,15 +167,14 @@ namespace AttendanceStudent.Database.Migrations
                 name: "AttendanceStudents",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsPresent = table.Column<bool>(type: "bit", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     AttendanceLogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsPresent = table.Column<bool>(type: "bit", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AttendanceStudents", x => x.Id);
+                    table.PrimaryKey("PK_AttendanceStudents", x => new { x.StudentId, x.AttendanceLogId });
                     table.ForeignKey(
                         name: "FK_AttendanceStudents_AttendanceLogs_AttendanceLogId",
                         column: x => x.AttendanceLogId,
@@ -212,9 +210,9 @@ namespace AttendanceStudent.Database.Migrations
                 column: "AttendanceLogId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttendanceStudents_StudentId",
+                name: "IX_AttendanceStudents_StudentId_AttendanceLogId",
                 table: "AttendanceStudents",
-                column: "StudentId");
+                columns: new[] { "StudentId", "AttendanceLogId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Classes_Code",

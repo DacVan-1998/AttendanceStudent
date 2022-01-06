@@ -24,6 +24,18 @@ namespace AdminApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddCors(options =>
+            {
+                // options.AddPolicy(name: AllowSpecificOrigins,
+                //     builder =>
+                //     {
+                //         builder.WithOrigins("*");
+                //     });
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials(); // allow any host, but should be update as production env
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +58,7 @@ namespace AdminApp
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

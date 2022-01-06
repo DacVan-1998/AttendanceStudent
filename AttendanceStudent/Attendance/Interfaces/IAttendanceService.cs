@@ -16,11 +16,14 @@ namespace AttendanceStudent.Attendance.Interfaces
         /// <summary>
         /// Create attendance log  
         /// </summary>
-        /// <param name="rollCallId"></param>
+        /// <param name="classId"></param>
+        /// <param name="subjectId"></param>
+        /// <param name="attendanceDate"></param>
+        /// <param name="lesson"></param>
         /// <param name="resources"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<Result<UploadAttendanceLogImageResponse>> CreateAttendanceLogAsync(Guid rollCallId,Dictionary<IFormFile, AttendanceLogImage> resources, CancellationToken cancellationToken = default(CancellationToken));
+        Task<Result<UploadAttendanceLogImageResponse>> CreateAttendanceLogAsync(Guid classId,Guid subjectId,DateTime attendanceDate,string lesson,Dictionary<IFormFile, AttendanceLogImage> resources, CancellationToken cancellationToken = default(CancellationToken));
         
         /// <summary>
         /// attendance student
@@ -47,7 +50,6 @@ namespace AttendanceStudent.Attendance.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<Result<AttendanceLogResponse>> ViewAttendanceLogAsync(Guid attendanceLogId, CancellationToken cancellationToken = default(CancellationToken));
-
-
+        
     }
 }

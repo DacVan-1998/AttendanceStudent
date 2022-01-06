@@ -49,7 +49,7 @@ namespace AttendanceStudent.Subject.Repositories.Implements
             await Task.CompletedTask;
             var keyword = query.Keyword?.ToUpper() ?? string.Empty;
             return _applicationDbContext.Subjects
-                .Where(r => keyword.Length == 0 || r.Code.Contains(keyword))
+                .Where(r => keyword.Length == 0 || r.Code.Contains(keyword) || r.Name.Contains(keyword))
                 .AsSplitQuery();
         }
     }

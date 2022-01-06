@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AttendanceStudent.Attendance.DTO.Responses;
 using AttendanceStudent.Attendance.Repositories.Interfaces;
 using AttendanceStudent.Commons.ImplementInterfaces;
 using AttendanceStudent.Commons.Interfaces;
@@ -12,7 +15,7 @@ namespace AttendanceStudent.Attendance.Repositories.Implements
     public class AttendanceLogRepository : Repository<Models.AttendanceLog>, IAttendanceLogRepository
     {
         private readonly IApplicationDbContext _applicationDbContext;
-        
+
         public AttendanceLogRepository(IApplicationDbContext applicationDbContext) : base(applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
@@ -21,17 +24,23 @@ namespace AttendanceStudent.Attendance.Repositories.Implements
         public async Task<AttendanceLog?> GetAttendanceLogByIdAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await _applicationDbContext.AttendanceLogs
-                .Include(al=>al.RollCall)
-                .ThenInclude(rc=>rc!.StudentRollCalls)
+                .Include(al => al.AttendanceStudents)
+                .Include(al => al.RollCall)
+                .ThenInclude(rc => rc!.StudentRollCalls)
                 .AsSplitQuery().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
-
-        public async Task<AttendanceLog?> GetAttendanceLogByDateAsync(string dateTime, CancellationToken cancellationToken = default(CancellationToken))
+        
+        public async Task<List<ViewPre7DayStatusResponse>> GetPrevious7DayStatus(Guid attendanceLogId, Guid studentId, DateTime dateTime, CancellationToken cancellationToken = default)
         {
-            return await _applicationDbContext.AttendanceLogs
-                .Include(al=>al.RollCall)
-                .ThenInclude(rc=>rc!.StudentRollCalls)
-                .AsSplitQuery().FirstOrDefaultAsync(r => r.AttendanceDate == dateTime, cancellationToken);
+            var result = await _applicationDbContext.AttendanceStudents
+                .Include(al => al.AttendanceLog)
+                .AsSplitQuery().Where(r => r.AttendanceLog != null && DateTime.Compare(r.AttendanceLog.AttendanceDate, dateTime) <= 0 && r.StudentId == studentId).Take(7).ToListAsync(cancellationToken);
+            return result.Select(x => new ViewPre7DayStatusResponse()
+            {
+                AttendanceDate = x.AttendanceLog.AttendanceDate.ToString("d"),
+                AttendanceTime = x.AttendanceLog.AttendanceTime,
+                Status = x.IsPresent
+            }).ToList();
         }
     }
 }

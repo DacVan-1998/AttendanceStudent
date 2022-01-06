@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AttendanceStudent.Attendance.DTO.Requests;
 using AttendanceStudent.Models;
 
@@ -9,11 +10,10 @@ namespace AttendanceStudent.Attendance.DTO.Responses
     {
         public Guid Id { get; set; }
         public string AttendanceDate { get; set; } = "";
-        public Guid RollCallId { get; set; }
-        public string SubjectCode { get; set; } = "";
-        public string ClassCode { get; set; } = "";
+        public string AttendanceTime { get; set; } = "";
 
-        public ICollection<AttendanceLogImageViewResponse> LogImages { get; set; } = new List<AttendanceLogImageViewResponse>();
-        public ICollection<AttendanceStudentViewResponse> AttendanceStudents = new List<AttendanceStudentViewResponse>();
+        public ICollection<string> LogImagePaths = new List<string>();
+        public List<AttendanceStudentViewResponse> AttendanceStudents = new List<AttendanceStudentViewResponse>();
+        
     }
 }

@@ -16,6 +16,8 @@ namespace AttendanceStudent.Database.Configurations
             builder.Property(u => u.OriginalName).IsRequired().IsUnicode().HasMaxLength(255);
             builder.Property(t => t.Size).IsRequired();
             builder.Property(t => t.ContentType).IsRequired().IsUnicode().HasMaxLength(255);
+            builder.HasOne(r => r.Student).WithMany(r => r.Images).HasForeignKey(r => r.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.ToTable("Student_Images");
         }
     }

@@ -1,0 +1,452 @@
+﻿@{
+    ViewBag.Title = "Quản lý sinh viên";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Quản lý sinh viên</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item">
+            <a href="/">Trang chủ</a>
+        </li>
+        <li class="breadcrumb-item active">Danh sách sinh viên</li>
+    </ol>
+    <div class="card mb-12">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Add</button>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-9 display-flex">
+                            <input style="margin-right: 10px" type="text" value="" name="keyword" id="ipSearch" class="form-control"/>
+                            <button style="margin-right: 10px" type="button" onclick="search()" class="btn btn-primary">Tìm</button>
+                            <button type="button" onclick="loadData()" class="btn btn-dark">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                @if (ViewBag.SuccessMsg != null)
+                {
+                    <div id="msgAlert" class="alert alert-success" role="alert">
+                        @ViewBag.SuccessMsg
+                    </div>
+                }
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            #
+                        </th>
+                        <th>
+                            Student Code
+                        </th>
+                        <th>
+                            Student Name
+                        </th>
+                        <th>
+                            Email
+                        </th>
+                        <th>
+                            Phone Number
+                        </th>
+                        <th>
+                            Images
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="tblData">
+
+                    </tbody>
+                </table>
+                <div id="pagination">
+                    @* <nav aria-label="Page navigation example"> *@
+                    @*     <ul class="pagination" id="load-pagination"> *@
+                    @*          *@
+                    @*     </ul> *@
+                    @* </nav> *@
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Add or Update Student</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group" id="divClassId">
+                                <label for="StudentId">Id</label>
+                                <input type="text" class="form-control" id="StudentId" placeholder="Id"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="Code">Student Code</label>
+                                <input type="text" class="form-control" id="Code" placeholder="Code"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="Name">Student Name</label>
+                                <input type="text" class="form-control" id="Name" placeholder="Name"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="Email">Email</label>
+                                <input type="text" class="form-control" id="Email" placeholder="Email"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="PhoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="PhoneNumber" placeholder="Phone Number"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Add</button>
+                        <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Update</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//Load Data in Table when documents is ready
+$(document).ready(function () {
+     //Initially load pagenumber=1
+     getPageData(1,10);
+});
+// $("body").on("click",".pagination li a",function (event) {
+//      event.preventDefault();
+//      var page = $(this).attr('data-page');
+// 
+//      //load event pagination
+//      getPageData(page,2);
+// });
+
+function openDialogForAdd(){
+    $('#Name').val("");
+    $('#Code').val("");
+    $('#Email').val("");
+    $('#PhoneNumber').val("");
+    $('#btnUpdate').hide();
+    $('#btnAdd').show();
+    $('#Name').css('border-color', 'lightgrey');
+    $('#Code').css('border-color', 'lightgrey');
+    $('#Email').css('border-color', 'lightgrey');
+    $('#PhoneNumber').css('border-color', 'lightgrey');
+    $('#myModal').modal('show');
+    $('#divClassId').hide();
+}
+
+//Load Data function
+function getPageData(pageNum, pageSize) {
+    $('#ipSearch').val("");
+    $("#tblData").empty();
+    $("#paged").empty();
+    $.ajax({
+        url: "https://localhost:5001/Student/List?Page="+pageNum+"&Size="+pageSize,
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            var html = '';
+            var count =0;
+            console.log(data);
+            $.each(data.data.result, function (key, item) {
+                count++;
+                html += '<tr>';
+                html += '<th scope="row">' + count + '</th>';
+                html += '<td>' + item.studentCode + '</td>';
+                html += '<td>' + item.fullName + '</td>';
+                html += '<td>' + item.email + '</td>';
+                html += '<td>' + item.phoneNumber + '</td>';
+                html += '<td><a class="btn btn-success" href="StudentImages?StudentId='+item.id+'" role="button">'+item.totalImages+' images</a></td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button>  | <button type="button" class="btn btn-danger" onclick="deleteStudent(\''+item.id+'\')">Delete</button></td>';
+                html += '</tr>';
+            });
+            $('#tblData').html(html);
+            apply_pagination(data.data.totalPages);
+            // load_pagination(data.data.currentPage,data.data.totalPages);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//Search Data function
+function search() {
+    let keyword =  $('#ipSearch').val();
+    console.log(keyword);
+    $.ajax({
+        url: "https://localhost:5001/Student/List?&Keyword="+keyword+"&Page=1&Size=1000",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            var html = '';
+            var count =0;
+            console.log(data);
+            $.each(data.data.result, function (key, item) {
+                count++;
+                html += '<tr>';
+                html += '<th scope="row">' + count + '</th>';
+                html += '<td>' + item.studentCode + '</td>';
+                html += '<td>' + item.fullName + '</td>';
+                html += '<td>' + item.email + '</td>';
+                html += '<td>' + item.phoneNumber + '</td>';
+                html += '<td><a class="btn btn-primary" href="StudentImages?StudentId='+item.id+'" role="button">'+item.totalImages+' images</a></td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button>  | <button type="button" class="btn btn-danger" onclick="deleteStudent(\''+item.id+'\')">Delete</button></td>';
+                html += '</tr>';
+            });
+            $('#tblData').html(html);
+            apply_pagination(data.data.totalPages);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+//Add Data Function
+function add() {
+    var res = validate();
+    if (res == false) {
+        return false;
+    }
+    var classObj = {
+        FullName: $('#Name').val(),
+        StudentCode: $('#Code').val(),
+        Email: $('#Email').val(),
+        PhoneNumber: $('#PhoneNumber').val(),
+    };
+    $.ajax({
+        url: "https://localhost:5001/Student",
+        data: JSON.stringify(classObj),
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            getPageData(1,10);
+            $('#myModal').modal('hide');
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//Function for getting the Data Based upon Employee ID
+function getByID(studentId) {
+    console.log(studentId);
+    $('#Code').css('border-color', 'lightgrey');
+    $('#Name').css('border-color', 'lightgrey');
+    $('#Email').css('border-color', 'lightgrey');
+    $('#PhoneNumber').css('border-color', 'lightgrey');
+    $.ajax({
+        url: "https://localhost:5001/Student/" + studentId,
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            $('#StudentId').val(data.data.id);
+            $('#Code').val(data.data.studentCode);
+            $('#Name').val(data.data.fullName);
+            $('#Email').val(data.data.email);
+            $('#PhoneNumber').val(data.data.phoneNumber);
+            $('#myModal').modal('show');
+            $('#divClassId').hide();
+            $('#btnUpdate').show();
+            $('#btnAdd').hide();
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//function for updating employee's record
+function update() {
+    var res = validate();
+    if (res === false) {
+        return false;
+    }
+    var Id = $('#StudentId').val();
+    console.log(Id);
+    var classObj = {
+        Name: $('#Name').val(),
+        Code: $('#Code').val(),
+        Email: $('#Email').val(),
+        PhoneNumber: $('#PhoneNumber').val(),
+    };
+    $.ajax({
+        url: "https://localhost:5001/Student/" + Id,
+        data: JSON.stringify(classObj),
+        type: "PUT",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            getPageData(1,10);
+            $('#myModal').modal('hide');
+            $('#StudentId').val("");
+            $('#Name').val("");
+            $('#Code').val("");
+            $('#Email').val("");
+            $('#PhoneNumber').val("");
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//function for deleting employee's record
+function deleteStudent(ID) {
+    var ans = confirm("Are you sure you want to delete this Record?");
+    if (ans) {
+        $.ajax({
+        url: "https://localhost:5001/Student/" + ID,
+            type: "DELETE",
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: function (result) {
+                getPageData(1,10);
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+}
+
+//Valdidation using jquery
+function validate() {
+    var isValid = true;
+    if ($('#Name').val().trim() === "") {
+        $('#Name').css('border-color', 'Red');
+        isValid = false;
+    }
+    else {
+        $('#Name').css('border-color', 'lightgrey');
+    }
+    if ($('#Code').val().trim() === "") {
+        $('#Code').css('border-color', 'Red');
+        isValid = false;
+    }
+    else {
+        $('#Code').css('border-color', 'lightgrey');
+    }
+   
+    if ($('#Email').val().trim() === "") {
+        $('#Email').css('border-color', 'Red');
+            isValid = false;
+        }
+    else {
+        $('#Email').css('border-color', 'lightgrey');
+    }
+     
+    if ($('#PhoneNumber').val().trim() === "") {
+        $('#PhoneNumber').css('border-color', 'Red');
+            isValid = false;
+    }
+    else {
+        $('#PhoneNumber').css('border-color', 'lightgrey');
+    }
+    return isValid;
+}
+
+ //This is paging temlpate ,you should just copy paste
+function PaggingTemplate(totalPage, currentPage) {
+        var template = "";
+        var TotalPages = totalPage;
+        var CurrentPage = currentPage;
+        var PageNumberArray = Array();
+
+        var countIncr = 1;
+        for (var i = currentPage; i <= totalPage; i++) {
+            PageNumberArray[0] = currentPage;
+            if (totalPage !== currentPage && PageNumberArray[countIncr - 1] !== totalPage) {
+                PageNumberArray[countIncr] = i + 1;
+            }
+            countIncr++;
+        }
+        PageNumberArray = PageNumberArray.slice(0, 5);
+        var FirstPage = 1;
+        var LastPage = totalPage;
+        if (totalPage !== currentPage) {
+            var ForwardOne = currentPage + 1;
+        }
+        var BackwardOne = 1;
+        if (currentPage > 1) {
+            BackwardOne = currentPage - 1;
+        }
+
+        template = "<p>" + CurrentPage + " of " + TotalPages + " pages</p>"
+        template = template + '<ul class="pager">' +
+            '<li><select ng-model="pageSize" id="selectedId"><option value="2" selected>2</option><option value="4">4</option><option value="6">6</option><option value="8">8</option></select> </li>' +
+            '<li class="previous"><a href="#" onclick="getPageData(\'' + FirstPage + '\',2)"><i class="fa fa-fast-backward"></i>&nbsp;First</a></li>' +
+            '<li><a href="#" onclick="getPageData(\''+BackwardOne+'\',2)"><i class="glyphicon glyphicon-backward"></i></a>';
+
+        var numberingLoop = "";
+        for (var i = 0; i < PageNumberArray.length; i++) {
+            numberingLoop = numberingLoop + '<a class="page-number active" onclick="getPageData(\'' + PageNumberArray[i] + '\',2)" href="#">' + PageNumberArray[i] + ' &nbsp;&nbsp;</a>'
+        }
+        template = template + numberingLoop + '<a href="#" onclick="getPageData(\'' + ForwardOne + '\',2)" ><i class="glyphicon glyphicon-forward"></i></a></li>' +
+            '<li class="next"><a href="#" onclick="getPageData(\'' + LastPage + '\',2)">Last&nbsp;<i class="fa fa-fast-forward"></i></a></li></ul>';
+        $("#paged").html(template);
+       $('#selectedId').change(function () {
+            getPageData(currentPage, $(this).val());
+        });
+    }
+ 
+function load_pagination(PageCurrent,TotalPages){
+       //create pagination
+       let pagination_string = "";
+       let pageCurrent = PageCurrent;
+       var numSize = TotalPages;
+ 
+       //create button previous
+       if (pageCurrent > 1) {
+           let pagePrevious = pageCurrent - 1;
+           pagination_string += '<li class="page-item"><a href="" class="page-link" data-page=' + pagePrevious + '>Previous</a></li>';
+       }
+                             
+       for (let i = 1; i <= numSize; i++){
+            if (i === pageCurrent) {
+                 pagination_string += '<li class="page-item active"><a href="" class="page-link" data-page=' + i + '>'+pageCurrent+'</a></li>';
+            } else {
+                 pagination_string += '<li class="page-item"><a href="" class="page-link" data-page=' + i + '>'+i+'</a></li>';
+            }
+       }
+ 
+       //create button next
+       if (pageCurrent > 0 && pageCurrent < numSize) {
+            let pageNext = pageCurrent + 1;
+                 pagination_string += '<li class="page-item"><a href="" class="page-link"  data-page=' + pageNext + '>Next</a></li>';
+       }
+ 
+       //load pagination
+       $("#load-pagination").html(pagination_string);
+}
+// Paging with twbsPagination
+function apply_pagination(totalPages) {
+      $('#pagination').twbsPagination({
+            totalPages: totalPages,
+            visiblePages: 6,
+            onPageClick: function (event, page) {
+                 getPageData(page,10)     
+            }
+      });
+}
+
+</script>

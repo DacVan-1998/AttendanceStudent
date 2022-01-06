@@ -99,7 +99,7 @@ namespace AttendanceStudent.Controllers
         /// <returns></returns>
         [HttpPost]
         [Produces("application/json")]
-        public async Task<IActionResult> CreateAttendanceLogAsync([FromQuery] Guid rollCallId, IFormFile file, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateAttendanceLogAsync([FromQuery] Guid classId, [FromQuery] Guid subjectId, [FromQuery] DateTime attendanceDate,[FromQuery] string lesson, IFormFile file, CancellationToken cancellationToken)
         {
             try
             {
@@ -118,9 +118,9 @@ namespace AttendanceStudent.Controllers
                     OriginalName = file.FileName,
                 });
 
-                var result = await _attendanceService.CreateAttendanceLogAsync(rollCallId,resources, cancellationToken);
+                var result = await _attendanceService.CreateAttendanceLogAsync(classId, subjectId, attendanceDate,lesson, resources, cancellationToken);
                 if (result.Succeeded)
-                    return Ok(new SuccessResponse());
+                    return Ok(new SuccessResponse(data: result.Data));
                 return Accepted(new FailureResponse(result.Errors));
             }
             catch (Exception e)
@@ -129,7 +129,7 @@ namespace AttendanceStudent.Controllers
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Create attendance log with attendance log image
         /// </summary>
@@ -152,5 +152,30 @@ namespace AttendanceStudent.Controllers
                 throw;
             }
         }
+        
+        /// <summary>
+        /// Create attendance log with attendance log image
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{attendanceLogId:guid}")]
+        [Produces("application/json")]
+        public async Task<IActionResult> ViewAttendanceLogAsync(Guid attendanceLogId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _attendanceService.ViewAttendanceLogAsync(attendanceLogId, cancellationToken);
+                if (result.Succeeded)
+                    return Ok(new SuccessResponse(data:result.Data));
+                return Accepted(new FailureResponse(result.Errors));
+            }
+            catch (Exception e)
+            {
+                _logger.LogCritical(e, "ViewAttendanceLogAsync");
+                throw;
+            }
+        }
+
+        
     }
 }

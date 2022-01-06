@@ -1,0 +1,299 @@
+﻿@{
+    ViewBag.Title = "Danh sách lớp học";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Quản lý lớp học</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item">
+            <a href="/">Trang chủ</a>
+        </li>
+        <li class="breadcrumb-item active">Danh sách lớp học</li>
+    </ol>
+    <div class="card mb-12">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Add</button>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-9 display-flex">
+                            <input style="margin-right: 10px" type="text" value="" name="keyword" id="ipSearch" class="form-control"/>
+                            <button style="margin-right: 10px" type="button" onclick="search()" class="btn btn-primary">Tìm</button>
+                            <button type="button" onclick="loadData()" class="btn btn-dark">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                @if (ViewBag.SuccessMsg != null)
+                {
+                    <div id="msgAlert" class="alert alert-success" role="alert">
+                        @ViewBag.SuccessMsg
+                    </div>
+                }
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            #
+                        </th>
+                        <th>
+                            Class Code
+                        </th>
+                        <th>
+                            Class Name
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody class="tbody">
+
+                    </tbody>
+                </table>
+                <div id="paged">
+
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Add or Update Class</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group" id="divClassId">
+                                <label for="ClassId">Id</label>
+                                <input type="text" class="form-control" id="ClassId" placeholder="Id"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="Name">Name</label>
+                                <input type="text" class="form-control" id="Name" placeholder="Name"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="Code">Code</label>
+                                <input type="text" class="form-control" id="Code" placeholder="Code"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Add</button>
+                        <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Update</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//Load Data in Table when documents is ready
+$(document).ready(function () {
+    loadData();
+});
+
+function openDialogForAdd(){
+    $('#Name').val("");
+    $('#Code').val("");
+    $('#btnUpdate').hide();
+    $('#btnAdd').show();
+    $('#Name').css('border-color', 'lightgrey');
+    $('#Code').css('border-color', 'lightgrey');
+    $('#myModal').modal('show');
+    $('#divClassId').hide();
+}
+//Load Data function
+function loadData() {
+    $('#ipSearch').val("");
+    $.ajax({
+        url: "https://localhost:5001/Class/List?Page=1&Size=30",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            var html = '';
+            var count =0;
+            console.log(data);
+            $.each(data.data.result, function (key, item) {
+                count++;
+                html += '<tr>';
+                html += '<th scope="row">' + count + '</th>';
+                html += '<td>' + item.code + '</td>';
+                html += '<td>' + item.name + '</td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button> | <button type="button" class="btn btn-danger" onclick="deleteClass(\''+item.id+'\')">Delete</button></td>';
+                html += '</tr>';
+            });
+            $('.tbody').html(html);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//Search Data function
+function search() {
+    let keyword =  $('#ipSearch').val();
+    console.log(keyword);
+    $.ajax({
+        url: "https://localhost:5001/Class/List?&Keyword="+keyword+"&Page=1&Size=30",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            var html = '';
+            var count=0;
+            console.log(data);
+            $.each(data.data.result, function (key, item) {
+                count++;
+                html += '<tr>';
+                html += '<th scope="row">' + count + '</th>';
+                html += '<td>' + item.code + '</td>';
+                html += '<td>' + item.name + '</td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button> | <button type="button" class="btn btn-danger" onclick="deleteClass(\''+item.id+'\')">Delete</button></td>';
+                html += '</tr>';
+            });
+            $('.tbody').html(html);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+//Add Data Function
+function add() {
+    var res = validate();
+    if (res == false) {
+        return false;
+    }
+    var classObj = {
+        Name: $('#Name').val(),
+        Code: $('#Code').val(),
+    };
+    $.ajax({
+        url: "https://localhost:5001/Class",
+        data: JSON.stringify(classObj),
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            loadData();
+            $('#myModal').modal('hide');
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//Function for getting the Data Based upon Employee ID
+function getByID(classId) {
+    console.log(classId);
+    $('#Code').css('border-color', 'lightgrey');
+    $('#Name').css('border-color', 'lightgrey');
+    $.ajax({
+        url: "https://localhost:5001/Class/" + classId,
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            $('#ClassId').val(data.data.id);
+            $('#Code').val(data.data.code);
+            $('#Name').val(data.data.name);
+            
+            $('#myModal').modal('show');
+            $('#divClassId').hide();
+            $('#btnUpdate').show();
+            $('#btnAdd').hide();
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//function for updating employee's record
+function update() {
+    var res = validate();
+    if (res === false) {
+        return false;
+    }
+    var Id = $('#ClassId').val();
+    console.log(Id);
+    var classObj = {
+        Name: $('#Name').val(),
+        Code: $('#Code').val(),
+    };
+    $.ajax({
+        url: "https://localhost:5001/Class/" + Id,
+        data: JSON.stringify(classObj),
+        type: "PUT",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            loadData();
+            $('#myModal').modal('hide');
+            $('#ClassId').val("");
+            $('#Name').val("");
+            $('#Code').val("");
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+//function for deleting employee's record
+function deleteClass(ID) {
+    var ans = confirm("Are you sure you want to delete this Record?");
+    if (ans) {
+        $.ajax({
+        url: "https://localhost:5001/Class/" + ID,
+            type: "DELETE",
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: function (result) {
+                loadData();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+}
+
+//Valdidation using jquery
+function validate() {
+    var isValid = true;
+    if ($('#Name').val().trim() === "") {
+        $('#Name').css('border-color', 'Red');
+        isValid = false;
+    }
+    else {
+        $('#Name').css('border-color', 'lightgrey');
+    }
+    if ($('#Code').val().trim() == "") {
+        $('#Code').css('border-color', 'Red');
+        isValid = false;
+    }
+    else {
+        $('#Code').css('border-color', 'lightgrey');
+    }
+   
+    return isValid;
+}
+
+</script>
