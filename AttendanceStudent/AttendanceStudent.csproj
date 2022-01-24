@@ -9,6 +9,7 @@
         <PackageReference Include="Emgu.CV" Version="4.5.1.4349" />
         <PackageReference Include="Emgu.CV.runtime.windows" Version="4.5.1.4349" />
         <PackageReference Include="EmguCV" Version="3.1.0.1" />
+        <PackageReference Include="EPPlus" Version="5.8.4" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="10.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
@@ -33,6 +34,7 @@
       <Folder Include="File\Validators" />
       <Folder Include="Resources\AttendanceLogImages" />
       <Folder Include="Resources\ExcelFiles\Export" />
+      <Folder Include="Resources\ExcelFiles\Import" />
       <Folder Include="Resources\ExcelFiles\Upload" />
       <Folder Include="Resources\FaceLoad" />
       <Folder Include="Resources\StudentImages" />

@@ -2,7 +2,162 @@
     ViewBag.Title = "Roll Call Management";
     Layout = "_Layout";
 }
+<style>
 
+    th,td{
+        vertical-align: middle;
+    }
+   body{
+     background: #F4F7FD;
+     margin-top:20px;
+   }
+   
+   .rollcall-list .rollcall-item {
+     padding: 1rem 1.9rem;
+     margin: 0 0.9375rem 1.875rem 0.9375rem;
+     background-color: #ffffff;
+     border-radius: 8px;
+     box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+     -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+     -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+     -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+   }
+   
+   .rollcall-list .rollcall-item.featured {
+     border: 1.5px solid #68cbd7;
+   }
+   
+   .rollcall-list .rollcall-item .rollcall-schedule {
+     color: #3c4142;
+     margin-bottom: 0.625rem;
+     justify-content: space-around;
+     align-items: center;
+   }
+   
+   .rollcall-list .rollcall-item .rollcall-schedule .event-icon {
+     stroke-width: 1px;
+     width: 1.125rem;
+     height: 1.125rem;
+     margin: 0.6875rem 1rem 0 0;
+   }
+   
+   .rollcall-list .rollcall-item .rollcall-schedule .event-day {
+     font-size: 40px;
+     font-weight: 50;
+     margin-right: 0.2rem;
+     line-height: 100%;
+   }
+   
+   .rollcall-list .rollcall-item .rollcall-schedule .event-month-time {
+     font-weight: 200;
+     font-size: 22px;
+     display: flex;
+     line-height: 118%;
+     flex-direction: column;
+     justify-content: center;
+   }
+   
+   .rollcall-list .rollcall-item .rollcall-schedule .event-month-time span {
+     display: block;
+     text-transform: uppercase;
+   }
+   
+   .rollcall-list .rollcall-item .class-name {
+     display: block;
+     margin-bottom: 0.625rem;
+     font-weight: 300;
+     color: #3c4142;
+   }
+   
+   .rollcall-list .rollcall-item .class-name:hover {
+     color: #68cbd7;
+     text-decoration: none;
+     cursor: default;
+   }
+   
+   .rollcall-list .rollcall-item .subject-name {
+     color: #b1bac5;
+     margin-bottom: 0.625rem;
+     font-size: 12px;
+     font-weight: 300;
+   }
+   .rollcall-list .rollcall-item .subject-name:hover {
+     color: #68cbd7;
+     text-decoration: none;
+     cursor: default;
+   }
+   
+   .rollcall-list .rollcall-item .student-list {
+     padding: 0;
+     margin: 0;
+     justify-content: center;
+   }
+   
+   .rollcall-list .rollcall-item .student-list .student {
+     width: 48px;
+     cursor: pointer;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     border-radius: 50%;
+     border: 2px solid #ffffff;
+   }
+   
+   .rollcall-list .rollcall-item .student-list .student .student-inital {
+     font-size: 13px;
+     line-height: 100%;
+   }
+   
+   .rollcall-list .rollcall-item .student-list {
+     display: flex !important;
+   }
+   
+   .rollcall-list .rollcall-item .student-list .student .student-pic {
+     width: 100%;
+     border-radius: 50%;
+   }
+   
+   .rollcall-list .rollcall-item .student-list li + li {
+     margin-left: -10px;
+   }
+   
+   
+   .rollcall-list .rollcall-item .student-list {
+     flex-direction: row !important;
+   }
+   .rollcall-list .rollcall-item .student-list {
+     padding: 0;
+     margin: 0;
+   }
+   
+   .bg-soft-primary {
+     background-color: #dce3fa;
+   }
+   
+   .bg-soft-danger {
+     background-color: #fedce0;
+   }
+   
+   .bg-soft-info {
+     background-color: #d7efff;
+   }
+   
+   .bg-soft-success {
+     background-color: #d1f6f2;
+   }
+   
+   .text-yellow {
+     color: yellow;
+   }
+   
+   .rollcall-list .rollcall-item .rollcall-schedule, .rollcall-list .rollcall-item .student-list{
+     display: flex !important;
+   }
+   
+   .text-primary, .task-list-wrapper .completed .remove {
+     color: #4e73e5 !important;
+   }
+</style>
 <div class="container-fluid">
     <h1 class="mt-4">Roll Call Management</h1>
     <ol class="breadcrumb mb-4">
@@ -10,125 +165,67 @@
             <a href="/">Trang chủ</a>
         </li>
         <li class="breadcrumb-item active">Roll Call List</li>
+        <li class="breadcrumb-item active">
+            <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Add</button>
+        </li>
     </ol>
-    <div class="card mb-12">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-md-6 col-xs-12">
-                    <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Add</button>
+    <div id="item" class="row">
+
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Add or Update Roll Call</h4>
                 </div>
-                <div class="col-md-6 col-xs-12">
-                    <div class="row">
-                        <div class="col-md-12 display-flex">
-                            <input style="margin-right: 10px" type="text" value="" name="keyword" id="ipSearch" class="form-control"/>
-                            <button style="margin-right: 10px" type="button" onclick="search()" class="btn btn-primary">Tìm</button>
-                            <button type="button" onclick="getPageData(1,10)" class="btn btn-dark">Reset</button>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group" id="divClassId">
+                            <label>Id</label>
+                            <input type="text" class="form-control" id="RollCallId" placeholder="Id"/>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <div class="form-group">
+                            <label>Class</label>
+                            <select class="form-select" id="classRoom">
 
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">
-                            #
-                        </th>
-                        <th>
-                            Class
-                        </th>
-                        <th>
-                            Subject
-                        </th>
-                        <th>
-                            From Date
-                        </th>
-                        <th>
-                            End Date
-                        </th>
-                        <th>
-                            Time
-                        </th>
-                        <th>
-                            Action
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody id="tblData">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select class="form-select" id="subject">
 
-                    </tbody>
-                </table>
-                <div id="pagination">
-
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Add or Update Roll Call</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="form-group" id="divClassId">
-                                <label>Id</label>
-                                <input type="text" class="form-control" id="RollCallId" placeholder="Id"/>
-                            </div>
-                            <div class="form-group">
-                                <label>Class</label>
-                                <select class="form-select" id="classRoom">
-
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Subject</label>
-                                <select class="form-select" id="subject">
-
-                                </select>
-                            </div>
-                            <input id="startDateUtc" name="date" type="hidden">
-                            <div class="form-group">
-                                <label>From Date</label>
-                                <div class="input-group date" id="datePickerStart">
-                                    <input type="text" class="form-control" id="startDate">
-                                    <span class="input-group-append">
-                                        <span class="input-group-text bg-white">
-                                            <i class="bi bi-calendar3"></i>
-                                        </span>
+                            </select>
+                        </div>
+                        <input id="startDateUtc" name="date" type="hidden">
+                        <div class="form-group">
+                            <label>From Date</label>
+                            <div class="input-group date" id="datePickerStart">
+                                <input type="text" class="form-control" id="startDate">
+                                <span class="input-group-append">
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-calendar3"></i>
                                     </span>
-                                </div>
+                                </span>
                             </div>
-                            <input id="endDateUtc" name="date" type="hidden">
-                            <div class="form-group">
-                                <label>End Date</label>
-                                <div class="input-group date" id="datePickerEnd">
-                                    <input type="text" class="form-control" id="endDate">
-                                    <span class="input-group-append">
-                                        <span class="input-group-text bg-white">
-                                            <i class="bi bi-calendar3"></i>
-                                        </span>
+                        </div>
+                        <input id="endDateUtc" name="date" type="hidden">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <div class="input-group date" id="datePickerEnd">
+                                <input type="text" class="form-control" id="endDate">
+                                <span class="input-group-append">
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-calendar3"></i>
                                     </span>
-                                </div>
+                                </span>
                             </div>
-                            <div class="form-group">
-                                <label>Start Time</label>
-                                <input type="text" class="input-sm form-control" id="startTime"/>
-                            </div>
-                            <div class="form-group">
-                                <label>Finish Time</label>
-                                <input type="text" class="input-sm form-control" id="finishTime"/>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Add</button>
-                        <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Update</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="hideDialog()">Close</button>
-                    </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Add</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Update</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="hideDialog()">Close</button>
                 </div>
             </div>
         </div>
@@ -158,7 +255,7 @@ $(document).ready(function () {
      //Initially load pagenumber=1
      loadClass();
      loadSubject();
-     getPageData(1,10);
+     getPageData(1,1000);
 });
 
 function openDialogForAdd(){
@@ -170,8 +267,6 @@ function openDialogForAdd(){
     $('#btnAdd').show();
     $('#classRoom').css('border-color', 'lightgrey');
     $('#subject').css('border-color', 'lightgrey');
-    $('#startTime').css('border-color', 'lightgrey');
-    $('#finishTime').css('border-color', 'lightgrey');
     $('#PhoneNumber').css('border-color', 'lightgrey');
     $('#myModal').modal('show');
     $('#divClassId').hide();
@@ -194,18 +289,66 @@ function getPageData(pageNum, pageSize) {
             var count =0;
             console.log(data);
             $.each(data.data.result, function (key, item) {
-                count++;
-                html += '<tr>';
-                html += '<th scope="row">' + count + '</th>';
-                html += '<td>' + item.class.name + '</td>';
-                html += '<td>' + item.subject.name + '</td>';
-                html += '<td>' + item.fromDate + '</td>';
-                html += '<td>' + item.endDate + '</td>';
-                html += '<td>' + item.startTime + ' to '+item.finishTime+'</td>';
-                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button>  | <button type="button" class="btn btn-danger" onclick="deleteRollCall(\''+item.id+'\')">Delete</button></td>';
-                html += '</tr>';
+                let dayFrom =moment(item.fromDate).date();
+                let monthFrom =moment().month(moment("2022/1/6").month()).format("MMM");
+                let yearFrom = moment(item.fromDate).year();
+                
+                 let dayEnd =moment(item.endDate).date();
+                 let monthEnd =moment().month(moment(item.endDate).month()).format("MMM");
+                 let yearEnd = moment(item.endDate).year();
+                 let student1 = item.students[0] ? item.students[0].fullName.match(/\b[A-Z]/g).join(''):"";
+                 let student2 = item.students[1] ? item.students[1].fullName.match(/\b[A-Z]/g).join(''):"";
+                 let student3 = item.students[2] ? item.students[2].fullName.match(/\b[A-Z]/g).join(''):"";
+                 let remainStudent = item.students.length > 3 ? item.students.length-3: 0;
+                console.log(yearFrom,monthFrom,dayFrom);                
+                console.log(yearEnd,monthEnd,dayEnd);              
+                console.log(student1);              
+                console.log(student2);              
+                console.log(student3);              
+                console.log(remainStudent);              
+                
+                html += '<div class="col-6" style="text-align: center">';                                                           
+                html += '<div id="rollCallDetail" class="rollcall-list">';
+                html += '  <div style="width: 374.5px">';
+                html += '    <div class="rollcall-item">';
+                html += '       <div class="rollcall-schedule">';
+                html += '          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar event-icon" style="width: 24px;height: 24px; margin-top: 3px;margin-right: 0px;"> ';
+                html += '              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect> ';
+                html += '              <line x1="16" y1="2" x2="16" y2="6"></line>';
+                html += '              <line x1="8" y1="2" x2="8" y2="6"></line>';
+                html += '              <line x1="3" y1="10" x2="21" y2="10"></line>';
+                html += '          </svg> ';
+                html += '          <span id="day-to" class="event-day">'+dayFrom+'</span> ';
+                html += '          <div class="event-month-time"> ';
+                html += '               <span id="month-to">'+monthFrom+'</span>';
+                html += '               <span id="year-to">'+yearFrom+'</span>';
+                html += '          </div>';
+                html += '          To';
+                html += '          <span id="day-from" class="event-day">'+dayEnd+'</span>';
+                html += '          <div class="event-month-time">';
+                html += '               <span id="month-from">'+monthEnd+'</span>';
+                html += '                <span id="year-from">'+yearEnd+'</span>';
+                html += '          </div>';
+                html += '     </div>';
+                html += '     <p id="className" class="class-name">' + item.class.name + '</p>';
+                html += '     <p id="subjectName" class="subject-name">' + item.subject.name + '</p>';
+                html += '     <ul class="student-list">';
+                html += '         <li class="student bg-soft-success" <span id="student-name-1" class="student-inital text-success">'+student1+'</span> </li>';
+                html += '         <li class="student bg-soft-primary" <span id="student-name-2" class="student-inital text-primary">'+student2+'</span> </li>';                                                    
+                html += '         <li class="student" data-toggle="tooltip" data-skin-class="tooltip-base"  data-html="true" data-placement="top" title=""data-original-title="<b>William S</b>">';
+                html += '             <img class="student-pic" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Profile Pic"/>';
+                html += '         </li>';
+                html += '         <li class="student bg-soft-danger" data-toggle="tooltip" data-skin-class="tooltip-base" data-html="true" data-placement="top" title="" data-original-title="<b>Ron M</b>"><span id="student-name-3" class="student-inital text-danger">'+student3+'</span>';
+                html += '         </li>';
+                html += '         <li class="student bg-soft-info" data-original-title="" title=""> <span id="student-remain" class="student-inital text-dark">+'+remainStudent+'</span>';
+                html += '         </li>'
+                html += '     </ul>';
+                html += '   </div>';
+                html += '  </div>';
+                html += '</div>';    
+                html += '</div>';
             });
-            $('#tblData').html(html);
+            $('#item').html(html);                     
             apply_pagination(data.data.totalPages);
             // load_pagination(data.data.currentPage,data.data.totalPages);
         },
@@ -236,7 +379,6 @@ function search() {
                 html += '<td>' + item.subject.name + '</td>';
                 html += '<td>' + item.fromDate + '</td>';
                 html += '<td>' + item.endDate + '</td>';
-                html += '<td>' + item.startTime + ' to '+item.finishTime+'</td>';
                 html += '<td><a class="btn btn-success" href="RollCallDetail?RollCallId='+item.id+'" role="button">Link</a> | <button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button> | <button type="button" class="btn btn-danger" onclick="deleteRollCall(\''+item.id+'\')">Delete</button></td>';
                 html += '</tr>';
             });
@@ -262,8 +404,6 @@ function add()
            subjectId: subjectId,
            fromDate: $("#startDateUtc").val(),
            endDate : $("#endDateUtc").val(),
-           startTime : $("#startTime").val(),
-           finishTime : $("#finishTime").val(),
        };
     $.ajax({
         url: "https://localhost:5001/RollCall",
@@ -305,8 +445,6 @@ function getByID(rollCallId) {
             $('#endDateUtc').val(endDate_formatted);
             console.log($('#endDateUtc').val());
                         
-            $('#startTime').val(data.data.startTime);
-            $('#finishTime').val(data.data.finishTime);
             $('#myModal').modal('show');
             $('#divClassId').hide();
             $('#btnUpdate').show();
@@ -332,8 +470,6 @@ function update() {
         subjectId: $("#subject option:selected").val(),
         fromDate: $("#startDateUtc").val(),
         endDate : $("#endDateUtc").val(),
-        startTime : $("#startTime").val(),
-        finishTime : $("#finishTime").val(),
     };
     $.ajax({
         url: "https://localhost:5001/RollCall/" + Id,
@@ -373,21 +509,7 @@ function deleteRollCall(ID) {
 //Valdidation using jquery
 function validate() {
     var isValid = true;
-    if ($('#startTime').val().trim() === "") {
-        $('#startTime').css('border-color', 'Red');
-        isValid = false;
-    }
-    else {
-        $('#startTime').css('border-color', 'lightgrey');
-    }
-    if ($('#finishTime').val().trim() === "") {
-        $('#finishTime').css('border-color', 'Red');
-        isValid = false;
-    }
-    else {
-        $('#finishTime').css('border-color', 'lightgrey');
-    }
-   
+     
     if ($('#endDate').val().trim() === "") {
         $('#endDate').css('border-color', 'Red');
             isValid = false;

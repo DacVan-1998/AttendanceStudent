@@ -25,6 +25,11 @@ namespace AttendanceStudent.Student.Repositories.Implements
             return await _applicationDbContext.Students.Where(r => r.StudentCode == code).AsSplitQuery().FirstOrDefaultAsync(cancellationToken);
         }
 
+        public async Task<List<Models.Student>> GetStudentsByCodesAsync(List<string> codes, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await _applicationDbContext.Students.Where(r => codes.Contains(r.StudentCode)).AsSplitQuery().ToListAsync(cancellationToken);
+        }
+
         public async Task<Models.Student?> GetStudentByEmailAsync(string email, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await _applicationDbContext.Students.Where(r => r.Email == email).AsSplitQuery().FirstOrDefaultAsync(cancellationToken);

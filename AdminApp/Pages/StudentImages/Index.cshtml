@@ -79,7 +79,7 @@ function deleteStudentImage(imageId) {
             type: "DELETE",
             contentType: "application/json;charset=UTF-8",
             dataType: "json",
-            success: function (result) {
+            success: function () {
                 loadStudentImages();
             },
             error: function (errormessage) {
@@ -105,7 +105,7 @@ function uploadFile(){
          data: formData,
          contentType: false,
          processData: false,
-         success: function(data){
+         success: function(){
             loadStudentImages()
          },
          error: function (data) {

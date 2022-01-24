@@ -25,6 +25,7 @@ namespace AttendanceStudent.Attendance.Repositories.Implements
         {
             return await _applicationDbContext.AttendanceLogs
                 .Include(al => al.AttendanceStudents)
+                .Include(al=>al.LogImages)
                 .Include(al => al.RollCall)
                 .ThenInclude(rc => rc!.StudentRollCalls)
                 .AsSplitQuery().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
@@ -34,7 +35,7 @@ namespace AttendanceStudent.Attendance.Repositories.Implements
         {
             var result = await _applicationDbContext.AttendanceStudents
                 .Include(al => al.AttendanceLog)
-                .AsSplitQuery().Where(r => r.AttendanceLog != null && DateTime.Compare(r.AttendanceLog.AttendanceDate, dateTime) <= 0 && r.StudentId == studentId).Take(7).ToListAsync(cancellationToken);
+                .AsSplitQuery().Where(r => r.AttendanceLog != null && DateTime.Compare(r.AttendanceLog.AttendanceDate, dateTime) < 0 && r.StudentId == studentId).Take(7).ToListAsync(cancellationToken);
             return result.Select(x => new ViewPre7DayStatusResponse()
             {
                 AttendanceDate = x.AttendanceLog.AttendanceDate.ToString("d"),

@@ -10,6 +10,6 @@ namespace AttendanceStudent.Attendance.DTO.Responses
         public bool IsPresent { get; set; }
         public string Note { get; set; } = "";
 
-        public List<ViewPre7DayStatusResponse> Previous7DayStatus = new List<ViewPre7DayStatusResponse>();
+        public List<ViewPre7DayStatusResponse> Previous7DayStatus { get; set; }
     }
 }

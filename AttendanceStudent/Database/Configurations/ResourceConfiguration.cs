@@ -8,6 +8,7 @@ namespace AttendanceStudent.Database.Configurations
     public class ResourceConfiguration
     {
         public string UploadFolderPath { get; set; }
+        public string ImportExcelFileFolder { get; set; }
         public string FaceLoad { get; set; }
         public string UploadAttendanceImageFolderPath { get; set; }
         public string UploadTemporaryStudentImageFolderPath { get; set; }

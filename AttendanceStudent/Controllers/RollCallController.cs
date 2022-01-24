@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AttendanceStudent.RollCall.DTO.Requests;
 using AttendanceStudent.RollCall.Interfaces;
 using Infrastructure.Common.Responses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AttendanceStudent.Controllers
@@ -183,6 +184,31 @@ namespace AttendanceStudent.Controllers
             try
             {
                 var result = await _rollCallService.RemoveStudentToRollCallAsync(rollCallId, removeStudentToRollCallRequest, cancellationToken);
+                if (result.Succeeded)
+                    return Ok(new SuccessResponse(data: result.Data));
+                return Accepted(new FailureResponse(result.Errors));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Import Students to Roll Call
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="excelFile"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("Student/ImportStudent/{rollCallId:guid}")]
+        public async Task<IActionResult> ImportStudentToRollCallAsync(Guid rollCallId,IFormFile excelFile, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                var result = await _rollCallService.ImportStudentToRollCallAsync(rollCallId, excelFile, cancellationToken);
                 if (result.Succeeded)
                     return Ok(new SuccessResponse(data: result.Data));
                 return Accepted(new FailureResponse(result.Errors));

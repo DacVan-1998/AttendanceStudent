@@ -2,7 +2,12 @@
     ViewBag.Title = "Quản lý sinh viên";
     Layout = "_Layout";
 }
-
+<style>
+    th,td{
+        vertical-align: middle;
+    }
+   
+</style>
 <div class="container-fluid">
     <h1 class="mt-4">Quản lý sinh viên</h1>
     <ol class="breadcrumb mb-4">
@@ -30,16 +35,8 @@
         </div>
 
         <div class="card-body">
-            <div class="row">
-                @if (ViewBag.SuccessMsg != null)
-                {
-                    <div id="msgAlert" class="alert alert-success" role="alert">
-                        @ViewBag.SuccessMsg
-                    </div>
-                }
-            </div>
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                     <tr>
                         <th scope="col">
@@ -219,11 +216,11 @@ function search() {
 }
 //Add Data Function
 function add() {
-    var res = validate();
-    if (res == false) {
+    const res = validate();
+    if (res === false) {
         return false;
     }
-    var classObj = {
+    const classObj = {
         FullName: $('#Name').val(),
         StudentCode: $('#Code').val(),
         Email: $('#Email').val(),
@@ -235,7 +232,7 @@ function add() {
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
-        success: function (result) {
+        success: function () {
             getPageData(1,10);
             $('#myModal').modal('hide');
         },
@@ -366,7 +363,7 @@ function validate() {
 }
 
  //This is paging temlpate ,you should just copy paste
-function PaggingTemplate(totalPage, currentPage) {
+function pagingTemplate(totalPage, currentPage) {
         var template = "";
         var TotalPages = totalPage;
         var CurrentPage = currentPage;

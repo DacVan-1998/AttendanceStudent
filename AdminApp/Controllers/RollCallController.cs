@@ -11,7 +11,7 @@ namespace AdminApp.Controllers
             return View("~/Pages/RollCall/Index.cshtml");
         }
         
-        public IActionResult RollCallDetail(Guid rollCallId)
+        public IActionResult RollCallDetail([FromQuery] Guid rollCallId)
         {
             return View("~/Pages/RollCall/RollCallDetail.cshtml",rollCallId);
         }

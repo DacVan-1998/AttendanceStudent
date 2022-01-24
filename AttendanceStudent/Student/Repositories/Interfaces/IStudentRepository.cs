@@ -19,6 +19,14 @@ namespace AttendanceStudent.Student.Repositories.Interfaces
         Task<Models.Student?> GetStudentByCodeAsync(string code, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
+        /// Get students by codes
+        /// </summary>
+        /// <param name="codes"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<List<Models.Student>> GetStudentsByCodesAsync(List<string> codes, CancellationToken cancellationToken = default(CancellationToken));
+        
+        /// <summary>
         /// Get student by code
         /// </summary>
         /// <param name="email"></param>
@@ -33,7 +41,7 @@ namespace AttendanceStudent.Student.Repositories.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<Models.Student?> GetStudentByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken = default(CancellationToken));
-        
+
         /// <summary>
         /// Get student by id
         /// </summary>
@@ -49,7 +57,7 @@ namespace AttendanceStudent.Student.Repositories.Interfaces
         /// <param name="studentId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<bool> IsDuplicatedCodeAsync(Guid studentId,string code, CancellationToken cancellationToken = default(CancellationToken));
+        Task<bool> IsDuplicatedCodeAsync(Guid studentId, string code, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Check duplicate email
@@ -58,7 +66,7 @@ namespace AttendanceStudent.Student.Repositories.Interfaces
         /// <param name="studentId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<bool> IsDuplicatedEmailAsync(Guid studentId,string email, CancellationToken cancellationToken = default(CancellationToken));
+        Task<bool> IsDuplicatedEmailAsync(Guid studentId, string email, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Check duplicate phone number
@@ -67,8 +75,8 @@ namespace AttendanceStudent.Student.Repositories.Interfaces
         /// <param name="studentId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<bool> IsDuplicatedPhoneNumberAsync(Guid studentId,string phoneNumber, CancellationToken cancellationToken = default(CancellationToken));
-        
+        Task<bool> IsDuplicatedPhoneNumberAsync(Guid studentId, string phoneNumber, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <summary>
         /// Search for subject by its name
         /// </summary>
@@ -78,6 +86,5 @@ namespace AttendanceStudent.Student.Repositories.Interfaces
         Task<IQueryable<Models.Student>> SearchStudent(PaginationBaseRequest query, CancellationToken cancellationToken = default(CancellationToken));
 
         Task<List<Models.Student>?> GetStudentsAsync(List<Guid> studentIds, CancellationToken cancellationToken = default(CancellationToken));
-
     }
 }

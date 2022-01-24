@@ -8,6 +8,7 @@ using AttendanceStudent.Commons.DTO.Pagination.Responses;
 using AttendanceStudent.Commons.Models;
 using AttendanceStudent.RollCall.DTO.Requests;
 using AttendanceStudent.RollCall.DTO.Responses;
+using Microsoft.AspNetCore.Http;
 
 namespace AttendanceStudent.RollCall.Interfaces
 {
@@ -71,6 +72,15 @@ namespace AttendanceStudent.RollCall.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<Result<ActionResult>> RemoveStudentToRollCallAsync(Guid rollCallId,RemoveStudentToRollCallRequest request, CancellationToken cancellationToken = default(CancellationToken));
+    
+        /// <summary>
+        /// Import Students to Roll Call 
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="excelFile"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<ActionResult>> ImportStudentToRollCallAsync(Guid rollCallId,IFormFile  excelFile, CancellationToken cancellationToken = default(CancellationToken));
 
     }
 }

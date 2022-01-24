@@ -2,7 +2,11 @@
     ViewBag.Title = "Danh sách lớp học";
     Layout = "_Layout";
 }
-
+<style>
+    th,td{
+        vertical-align: middle;
+    }   
+</style>
 <div class="container-fluid">
     <h1 class="mt-4">Quản lý lớp học</h1>
     <ol class="breadcrumb mb-4">
@@ -30,16 +34,8 @@
         </div>
 
         <div class="card-body">
-            <div class="row">
-                @if (ViewBag.SuccessMsg != null)
-                {
-                    <div id="msgAlert" class="alert alert-success" role="alert">
-                        @ViewBag.SuccessMsg
-                    </div>
-                }
-            </div>
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                     <tr>
                         <th scope="col">

@@ -24,6 +24,8 @@ namespace AttendanceStudent.RollCall.Repositories.Implements
             return await _applicationDbContext.RollCalls
                 .Include(rc => rc.Class)
                 .Include(rc => rc.Subject)
+                .Include(rc=>rc.AttendanceLogs)
+                .ThenInclude(al=>al.AttendanceStudents)
                 .Include(rc => rc.StudentRollCalls)
                 .ThenInclude(sc => sc.Student)
                 .AsSplitQuery()
@@ -48,6 +50,8 @@ namespace AttendanceStudent.RollCall.Repositories.Implements
             return _applicationDbContext.RollCalls
                 .Include(rc => rc.Class)
                 .Include(rc => rc.Subject)
+                .Include(rc=>rc.StudentRollCalls)
+                .ThenInclude(src=>src.Student)
                 .Where(r => keyword.Length == 0 || r.Class.Code.Contains(keyword) || r.Subject.Code.Contains(keyword))
                 .AsSplitQuery();
         }

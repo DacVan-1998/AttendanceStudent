@@ -33,7 +33,7 @@ namespace AttendanceStudent.Attendance.Services
         }
 
 
-        public async Task<Result<UploadAttendanceLogImageResponse>> CreateAttendanceLogAsync(Guid classId, Guid subjectId,DateTime attendanceDate,string lesson, Dictionary<IFormFile, AttendanceLogImage> resources, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<Result<UploadAttendanceLogImageResponse>> CreateAttendanceLogAsync(Guid classId, Guid subjectId, DateTime attendanceDate, string lesson, Dictionary<IFormFile, AttendanceLogImage> resources, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
@@ -113,13 +113,15 @@ namespace AttendanceStudent.Attendance.Services
         {
             try
             {
+                var listStudentIds = new List<Guid>(request.Students.Distinct());
                 var existedAttendanceLog = await _unitOfWork.AttendanceLogs.GetAttendanceLogByIdAsync(attendanceLogId, cancellationToken);
                 if (existedAttendanceLog == null)
                     return Result<ActionResult>.Fail(LocalizationString.AttendanceLog.NotFound.ToErrors(_localizationService));
 
                 //Check input students list must be existed in student list of roll call in the db
                 foreach (var item in request.Students.Where(item => existedAttendanceLog.RollCall != null && existedAttendanceLog.RollCall.StudentRollCalls.All(x => x.StudentId != item)))
-                    return Result<ActionResult>.Fail(string.Format(LocalizationString.RollCall.NotExist, item).ToErrors(_localizationService));
+                    listStudentIds.Remove(item);
+                // return Result<ActionResult>.Fail(string.Format(LocalizationString.RollCall.NotExist, item).ToErrors(_localizationService));
 
                 // Attendance present for input student ids list 
                 if (existedAttendanceLog.RollCall != null)
@@ -128,7 +130,7 @@ namespace AttendanceStudent.Attendance.Services
                     {
                         AttendanceLogId = attendanceLogId,
                         StudentId = item.StudentId,
-                        IsPresent = request.Students.Any(x => x == item.StudentId),
+                        IsPresent = listStudentIds.Any(x => x == item.StudentId),
                         Note = string.Empty
                     }).ToList();
 
@@ -196,16 +198,16 @@ namespace AttendanceStudent.Attendance.Services
                         StudentName = item.Student?.FullName ?? string.Empty,
                         IsPresent = item.IsPresent,
                         Note = item.Note,
-                        Previous7DayStatus = await _unitOfWork.AttendanceLogs.GetPrevious7DayStatus(existedAttendanceLog.Id,item.StudentId,existedAttendanceLog.AttendanceDate,cancellationToken),
+                        Previous7DayStatus = await _unitOfWork.AttendanceLogs.GetPrevious7DayStatus(existedAttendanceLog.Id, item.StudentId, existedAttendanceLog.AttendanceDate, cancellationToken),
                     });
                 }
-                
+
                 return Result<AttendanceLogResponse>.Succeed(new AttendanceLogResponse()
                 {
                     Id = existedAttendanceLog.Id,
                     AttendanceDate = existedAttendanceLog.AttendanceDate.ToString("d"),
                     AttendanceTime = existedAttendanceLog.AttendanceTime,
-                    LogImagePaths = (existedAttendanceLog.LogImages ?? new List<AttendanceLogImage>()).Select(li =>Path.Combine("https://localhost:5001/File/", li.Name)).ToList(),
+                    LogImagePaths = (existedAttendanceLog.LogImages ?? new List<AttendanceLogImage>()).Select(li => Path.Combine("https://localhost:5001/File/", li.Name)).ToList(),
                     AttendanceStudents = attendanceStudentList,
                 });
             }

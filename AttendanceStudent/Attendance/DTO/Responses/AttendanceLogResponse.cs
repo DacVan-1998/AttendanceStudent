@@ -11,9 +11,8 @@ namespace AttendanceStudent.Attendance.DTO.Responses
         public Guid Id { get; set; }
         public string AttendanceDate { get; set; } = "";
         public string AttendanceTime { get; set; } = "";
-
-        public ICollection<string> LogImagePaths = new List<string>();
-        public List<AttendanceStudentViewResponse> AttendanceStudents = new List<AttendanceStudentViewResponse>();
-        
+        public string PresentRate { get; set; } = "";
+        public List<string>? LogImagePaths { get; set; }
+        public List<AttendanceStudentViewResponse> AttendanceStudents { get; set; }
     }
 }

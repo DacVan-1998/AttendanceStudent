@@ -279,7 +279,7 @@ namespace AttendanceStudent.Database.Migrations
             modelBuilder.Entity("AttendanceStudent.Models.AttendanceLog", b =>
                 {
                     b.HasOne("AttendanceStudent.Models.RollCall", "RollCall")
-                        .WithMany()
+                        .WithMany("AttendanceLogs")
                         .HasForeignKey("RollCallId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -380,6 +380,8 @@ namespace AttendanceStudent.Database.Migrations
 
             modelBuilder.Entity("AttendanceStudent.Models.RollCall", b =>
                 {
+                    b.Navigation("AttendanceLogs");
+
                     b.Navigation("StudentRollCalls");
                 });
 
