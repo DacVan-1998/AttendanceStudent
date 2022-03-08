@@ -21,6 +21,8 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href="/css/site.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     @* <style> *@
     @*     #layoutSidenav{ *@
     @*         background: url("https://wallpaperaccess.com/full/3480785.jpg"); *@
@@ -30,7 +32,7 @@
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" href="https://localhost:4001">Dashboard</a>
+    <a class="navbar-brand ps-3" href="https://localhost:4001">Trang chủ</a>
     <!-- Sidebar Toggle-->
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
         <i class="fas fa-bars"></i>
@@ -51,18 +53,6 @@
                 <i class="fas fa-user fa-fw"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li>
-                    <a class="dropdown-item" href="#">Settings</a>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="#">Activity Log</a>
-                </li>
-                <li>
-                    <hr class="dropdown-divider"/>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="#">Logout</a>
-                </li>
             </ul>
         </li>
     </ul>
@@ -72,35 +62,35 @@
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div class="sb-sidenav-menu">
                 <div class="nav">
-                    <a class="nav-link" href="http://127.0.0.1:5500/AttendanceStudent.html">
+                    <a class="nav-link" href="http://localhost:5500/index.html">
                         <div class="sb-nav-link-icon">
                             <i class="fas fa-edit"></i>
                         </div>
-                        Attendance
+                        Điểm danh
                     </a>
                     <a class="nav-link collapsed" href="https://localhost:4001/Student">
                         <div class="sb-nav-link-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        Student
+                        Sinh viên
                     </a>
                     <a class="nav-link collapsed" href="https://localhost:4001/Class">
                         <div class="sb-nav-link-icon">
                             <i class="fas fa-door-open"></i>
                         </div>
-                        Class
+                        Lớp học
                     </a>
                     <a class="nav-link collapsed" href="https://localhost:4001/Subject">
                         <div class="sb-nav-link-icon">
                             <i class="fas fa-book-open"></i>
                         </div>
-                        Subject
+                        Môn học
                     </a>
                     <a class="nav-link collapsed" href="https://localhost:4001/RollCall">
                         <div class="sb-nav-link-icon">
                             <i class="far fa-address-book"></i>
                         </div>
-                        RollCall
+                        Bảng điểm danh
                     </a>
                 </div>
             </div>
@@ -113,7 +103,7 @@
         <footer class="py-4 bg-light mt-auto">
             <div class="container-fluid px-4">
                 <div class="d-flex align-items-center justify-content-between small">
-                    <div class="text-muted">Attendance Website 2021</div>
+                    <div class="text-muted">Trang web điểm danh sinh viên 2021</div>
                 </div>
             </div>
         </footer>

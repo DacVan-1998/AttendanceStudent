@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,7 +13,6 @@ using AttendanceStudent.Commons;
 using AttendanceStudent.Commons.DTO.Pagination.Responses;
 using AttendanceStudent.Commons.Extensions;
 using AttendanceStudent.Commons.Interfaces;
-using AttendanceStudent.Commons.Models;
 using AttendanceStudent.Database.Configurations;
 using AttendanceStudent.File.DTO.Responses;
 using AttendanceStudent.Models;
@@ -21,9 +21,13 @@ using AttendanceStudent.RollCall.DTO.Responses;
 using AttendanceStudent.RollCall.Interfaces;
 using AttendanceStudent.Student.DTO.Responses;
 using AttendanceStudent.Subject.DTO.Responses;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using ActionResult = AttendanceStudent.Commons.Models.ActionResult;
 
 namespace AttendanceStudent.RollCall.Services
 {
@@ -33,12 +37,14 @@ namespace AttendanceStudent.RollCall.Services
         private readonly IPaginationService _paginationService;
         private readonly IStringLocalizationService _localizationService;
         private readonly ResourceConfiguration _resourceConfiguration;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public RollCallService(IUnitOfWork unitOfWork, IPaginationService paginationService, IStringLocalizationService localizationService, IOptions<ResourceConfiguration> resourceConfiguration)
+        public RollCallService(IUnitOfWork unitOfWork, IPaginationService paginationService, IStringLocalizationService localizationService, IOptions<ResourceConfiguration> resourceConfiguration, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
             _paginationService = paginationService;
             _localizationService = localizationService;
+            _webHostEnvironment = webHostEnvironment;
             _resourceConfiguration = resourceConfiguration.Value;
         }
 
@@ -119,8 +125,8 @@ namespace AttendanceStudent.RollCall.Services
                 return Result<ViewRollCallResponse>.Succeed(new ViewRollCallResponse()
                 {
                     Id = existedRollCall.Id,
-                    FromDate = existedRollCall.FromDate.ToString("yyyy//MM/dd"),
-                    EndDate = existedRollCall.EndDate.ToString("yyyy/MM/dd"),
+                    FromDate = existedRollCall.FromDate.ToString("MM/dd/yyyy"),
+                    EndDate = existedRollCall.EndDate.ToString("MM/dd/yyyy"),
                     Class = new ViewClassResponse()
                     {
                         Id = existedRollCall.Class?.Id ?? Guid.Empty,
@@ -364,6 +370,93 @@ namespace AttendanceStudent.RollCall.Services
                 var result = await _unitOfWork.CompleteAsync(cancellationToken);
                 // Save log
                 return result <= 0 ? Result<ActionResult>.Fail(Constants.CannotFinishRequest) : Result<ActionResult>.Succeed();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<Result<ExportRollCallResponse>> ExportRollCallAsync(Guid rollCallId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                PhysicalFileResult fileResult = null;
+                var rollCall = await _unitOfWork.RollCalls.GetRollCallByIdAsync(rollCallId, cancellationToken);
+                if (rollCall == null)
+                    return Result<ExportRollCallResponse>.Fail(LocalizationString.Common.ItemNotFound.ToErrors(_localizationService));
+
+                var excel = new ExcelPackage();
+                var workSheet = excel.Workbook.Worksheets.Add(rollCall.Class?.Name + rollCall.Subject?.Name);
+                //Header of table  
+
+                workSheet.Row(1).Height = 20;
+                workSheet.Rows.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                workSheet.Row(1).Style.Font.Bold = true;
+                workSheet.Cells[1, 1].Value = "STT";
+                workSheet.Cells[1, 2].Value = "Mã sinh viên";
+                workSheet.Cells[1, 3].Value = "Tên sinh viên";
+                workSheet.Cells[1, 4].Value = "Mã lớp";
+
+                //Body of table  
+                var recordIndex = 2;
+                foreach (var student in rollCall.StudentRollCalls)
+                {
+                    workSheet.Cells[recordIndex, 1].Value = (recordIndex - 1).ToString();
+                    workSheet.Cells[recordIndex, 2].Value = student.Student?.StudentCode ?? string.Empty;
+                    workSheet.Cells[recordIndex, 3].Value = student.Student?.FullName ?? string.Empty;
+                    workSheet.Cells[recordIndex, 4].Value = student.RollCall?.Class?.Code;
+                    recordIndex++;
+                }
+
+                var attendanceRecordIndex = 2;
+                var columnAttendanceDateNumber = 5;
+                foreach (var item in rollCall.AttendanceLogs)
+                {
+                    //Header of attendance log
+                    workSheet.Cells[1, columnAttendanceDateNumber].Value = item.AttendanceDate.ToString(CultureInfo.InvariantCulture).Substring(0, item.AttendanceDate.ToString(CultureInfo.InvariantCulture).LastIndexOf('/'));
+                    //Body of table attendance log
+                    var listStudentAttendancedByDate = item.AttendanceStudents.Where(x => x.IsPresent).Select(x => x.Student?.StudentCode).ToList();
+                    for (var i = 0; i < rollCall.StudentRollCalls.Count; i++)
+                    {
+                        workSheet.Cells[attendanceRecordIndex, columnAttendanceDateNumber].Value = listStudentAttendancedByDate.Any(x => ReferenceEquals(x, workSheet.Cells[attendanceRecordIndex, 2].Value)) ? "x" : string.Empty;
+                        attendanceRecordIndex++;
+                    }
+
+                    columnAttendanceDateNumber++;
+                    attendanceRecordIndex = 2;
+                }
+                
+                workSheet.Columns.AutoFit();  
+                
+                string fileName = $"request_roll_call_{DateTime.Now.ToString(Constants.Others.ExcelFileDateTimeFormat)}.xlsx";
+                string path = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.ExportExcelFileFolderPath);
+                await excel.SaveAsAsync(Path.Combine(path, fileName), cancellationToken);
+                fileResult = new PhysicalFileResult(Path.Combine(path, fileName), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {EnableRangeProcessing = true, FileDownloadName = fileName};
+
+                return Result<ExportRollCallResponse>.Succeed(new ExportRollCallResponse() {PhysicalFileResult = fileResult});
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<PhysicalFileResult> DownloadExportFileAsync(string fileName, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                string path = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.ExportExcelFileFolderPath, fileName);
+                if (!System.IO.File.Exists(path))
+                    return null;
+
+                var result = new PhysicalFileResult(path, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                result.FileDownloadName = fileName;
+                result.EnableRangeProcessing = true; // Allow browser to know len of file
+                return result;
             }
             catch (Exception e)
             {

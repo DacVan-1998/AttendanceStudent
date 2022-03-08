@@ -3,8 +3,10 @@ using AttendanceStudent.Attendance.Interfaces;
 using AttendanceStudent.Attendance.Repositories.Implements;
 using AttendanceStudent.Attendance.Repositories.Interfaces;
 using AttendanceStudent.Attendance.Services;
+using AttendanceStudent.AttendanceLogImages.Interfaces;
 using AttendanceStudent.AttendanceLogImages.Repositories.Implements;
 using AttendanceStudent.AttendanceLogImages.Repositories.Interfaces;
+using AttendanceStudent.AttendanceLogImages.Services;
 using AttendanceStudent.Class.Interfaces;
 using AttendanceStudent.Class.Repositories.Implements;
 using AttendanceStudent.Class.Repositories.Interfaces;
@@ -105,6 +107,7 @@ namespace AttendanceStudent
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IFileManagementService, FileManagementService>();
+            services.AddScoped<IAttendanceLogImageManagementService, AttendanceLogImageManagementService>();
             services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IPaginationService, PaginationService>();
             services.AddScoped<IAttendanceLogImageRepository, AttendanceLogImageRepository>();

@@ -21,6 +21,7 @@ namespace AttendanceStudent.Commons.Interfaces
         public DbSet<StudentImage> Images { get; set; }
         public DbSet<AttendanceStudent.Models.RollCall> RollCalls { get; set; }
         public DbSet<AttendanceStudent.Models.AttendanceStudent> AttendanceStudents { get; set; }
+        public DbSet<AttendanceStudent.Models.AttendanceLogImage> AttendanceLogImages { get; set; }
        
         #endregion
         public DatabaseFacade Database { get; }

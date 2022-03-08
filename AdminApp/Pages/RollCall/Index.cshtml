@@ -65,6 +65,7 @@
    .rollcall-list .rollcall-item .class-name {
      display: block;
      margin-bottom: 0.625rem;
+     font-size: x-large;
      font-weight: 300;
      color: #3c4142;
    }
@@ -78,7 +79,7 @@
    .rollcall-list .rollcall-item .subject-name {
      color: #b1bac5;
      margin-bottom: 0.625rem;
-     font-size: 12px;
+     font-size: large;
      font-weight: 300;
    }
    .rollcall-list .rollcall-item .subject-name:hover {
@@ -157,16 +158,21 @@
    .text-primary, .task-list-wrapper .completed .remove {
      color: #4e73e5 !important;
    }
+   
+   .action {
+     margin-top:20px;
+   }
+   
 </style>
 <div class="container-fluid">
-    <h1 class="mt-4">Roll Call Management</h1>
+    <h1 class="mt-4">Quản lý bảng điểm danh</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item">
             <a href="/">Trang chủ</a>
         </li>
-        <li class="breadcrumb-item active">Roll Call List</li>
+        <li class="breadcrumb-item active">Danh sách</li>
         <li class="breadcrumb-item active">
-            <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Add</button>
+            <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Thêm mới</button>
         </li>
     </ol>
     <div id="item" class="row">
@@ -176,7 +182,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Add or Update Roll Call</h4>
+                    <h4 class="modal-title" id="myModalLabel">Thêm hoặc sửa bảng điểm danh</h4>
                 </div>
                 <div class="modal-body">
                     <form>
@@ -185,20 +191,20 @@
                             <input type="text" class="form-control" id="RollCallId" placeholder="Id"/>
                         </div>
                         <div class="form-group">
-                            <label>Class</label>
+                            <label>Lớp</label>
                             <select class="form-select" id="classRoom">
 
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Subject</label>
+                            <label>Môn</label>
                             <select class="form-select" id="subject">
 
                             </select>
                         </div>
                         <input id="startDateUtc" name="date" type="hidden">
                         <div class="form-group">
-                            <label>From Date</label>
+                            <label>Ngày bắt đầu</label>
                             <div class="input-group date" id="datePickerStart">
                                 <input type="text" class="form-control" id="startDate">
                                 <span class="input-group-append">
@@ -210,7 +216,7 @@
                         </div>
                         <input id="endDateUtc" name="date" type="hidden">
                         <div class="form-group">
-                            <label>End Date</label>
+                            <label>Ngày kết thúc</label>
                             <div class="input-group date" id="datePickerEnd">
                                 <input type="text" class="form-control" id="endDate">
                                 <span class="input-group-append">
@@ -223,9 +229,9 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Add</button>
-                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Update</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="hideDialog()">Close</button>
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Thêm mới</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Cập nhật</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="hideDialog()">Đóng</button>
                 </div>
             </div>
         </div>
@@ -309,7 +315,7 @@ function getPageData(pageNum, pageSize) {
                 
                 html += '<div class="col-6" style="text-align: center">';                                                           
                 html += '<div id="rollCallDetail" class="rollcall-list">';
-                html += '  <div style="width: 374.5px">';
+                html += '  <div style="width: 390px">';
                 html += '    <div class="rollcall-item">';
                 html += '       <div class="rollcall-schedule">';
                 html += '          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar event-icon" style="width: 24px;height: 24px; margin-top: 3px;margin-right: 0px;"> ';
@@ -333,15 +339,17 @@ function getPageData(pageNum, pageSize) {
                 html += '     <p id="className" class="class-name">' + item.class.name + '</p>';
                 html += '     <p id="subjectName" class="subject-name">' + item.subject.name + '</p>';
                 html += '     <ul class="student-list">';
-                html += '         <li class="student bg-soft-success" <span id="student-name-1" class="student-inital text-success">'+student1+'</span> </li>';
-                html += '         <li class="student bg-soft-primary" <span id="student-name-2" class="student-inital text-primary">'+student2+'</span> </li>';                                                    
-                html += '         <li class="student" data-toggle="tooltip" data-skin-class="tooltip-base"  data-html="true" data-placement="top" title=""data-original-title="<b>William S</b>">';
-                html += '             <img class="student-pic" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Profile Pic"/>';
+                html += '         <li class="student bg-soft-info" data-original-title="" title=""> <span id="student-remain" class="student-inital text-dark">+'+item.students.length+'</span>';
                 html += '         </li>';
-                html += '         <li class="student bg-soft-danger" data-toggle="tooltip" data-skin-class="tooltip-base" data-html="true" data-placement="top" title="" data-original-title="<b>Ron M</b>"><span id="student-name-3" class="student-inital text-danger">'+student3+'</span>';
-                html += '         </li>';
-                html += '         <li class="student bg-soft-info" data-original-title="" title=""> <span id="student-remain" class="student-inital text-dark">+'+remainStudent+'</span>';
-                html += '         </li>'
+                html += '         <li class="student" data-toggle="tooltip" data-skin-class="tooltip-base" data-html="true" data-placement="top" title="" data-original-title="<b>William S</b>">';
+                html += '              <img class="student-pic" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Profile Pic"/>';
+                html += '         </li>';            
+                html += '     </ul>';
+                html += '     <div class="action">';
+                html += '         <button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Sửa</button>';
+                html += '         <a href="https://localhost:4001/RollCall/RollCallDetail?rollCallId=' + item.id + '" class="btn btn-success">Nhật ký</a>';
+                html += '         <button type="button" class="btn btn-success" onclick="exportExcel(\''+item.id+'\')">Xuất Excel</button>';
+                html += '         <button type="button" class="btn btn-danger" onclick="deleteRollCall(\''+item.id+'\')">Xóa</button>';
                 html += '     </ul>';
                 html += '   </div>';
                 html += '  </div>';
@@ -438,12 +446,10 @@ function getByID(rollCallId) {
             
             fromDate_formatted = formatDate(data.data.fromDate);
             $('#startDateUtc').val(fromDate_formatted);
-            console.log($('#startDateUtc').val());
                         
             $('#endDate').val(data.data.endDate);
             endDate_formatted = formatDate(data.data.endDate);
             $('#endDateUtc').val(endDate_formatted);
-            console.log($('#endDateUtc').val());
                         
             $('#myModal').modal('show');
             $('#divClassId').hide();
@@ -505,7 +511,22 @@ function deleteRollCall(ID) {
         });
     }
 }
+function exportExcel(rollCallId) {
+   $.ajax({
+            url: "https://localhost:5001/RollCall/ExportRollCall/"+rollCallId,
+            type: 'GET',
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function(result) {
+                downloadExcelFile(result.data.physicalFileResult.fileDownloadName)  
+            }            
+        }); 
+}
 
+function downloadExcelFile(fileName) {
+    let url = "https://localhost:5001/RollCall/DownloadExportFile/"+fileName;
+    window.open(url,'_blank');
+}
 //Valdidation using jquery
 function validate() {
     var isValid = true;
@@ -518,7 +539,7 @@ function validate() {
         $('#endDate').css('border-color', 'lightgrey');
     }
      
-    if ($('#startDate').val().trim() === "") {
+    if ($('#startDate').val().trim() === "") { 
         $('#startDate').css('border-color', 'Red');
             isValid = false;
     }
@@ -590,11 +611,18 @@ function loadSubject(){
 function formatDate(dateTime){
      let fromDate = new Date(dateTime);
      let date = "" ;
+     let month = "" ;
      if ( fromDate.getDate() < 10 ) 
          date = "0"+fromDate.getDate();
      else 
          date = fromDate.getDate();
      
-     return fromDate.getFullYear() + "-" + (fromDate.getMonth() + 1) + "-" +date+"T00:00:00.000Z";     
+     if ( fromDate.getMonth() < 10 ) 
+         month = "0"+(fromDate.getMonth()+1);
+     else 
+         month = fromDate.getMonth()+1;
+        
+     console.log(month)
+     return fromDate.getFullYear() + "-" + month + "-" +date+"T00:00:00.000Z";     
 }
 </script>

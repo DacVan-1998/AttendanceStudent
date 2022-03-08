@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="AttendanceLogImages\DTO\Responses" />
       <Folder Include="Attendance\Validators" />
       <Folder Include="Database\Migrations" />
       <Folder Include="File\Validators" />

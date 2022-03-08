@@ -25,23 +25,35 @@ namespace AttendanceStudent.Attendance.Repositories.Implements
         {
             return await _applicationDbContext.AttendanceLogs
                 .Include(al => al.AttendanceStudents)
-                .Include(al=>al.LogImages)
+                .ThenInclude(ats => ats.Student)
+                .Include(al => al.LogImages)
+                .Include(al => al.RollCall)
+                .ThenInclude(rc => rc.Class)
+                .Include(al => al.RollCall)
+                .ThenInclude(rc => rc.Subject)
                 .Include(al => al.RollCall)
                 .ThenInclude(rc => rc!.StudentRollCalls)
                 .AsSplitQuery().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
-        
-        public async Task<List<ViewPre7DayStatusResponse>> GetPrevious7DayStatus(Guid attendanceLogId, Guid studentId, DateTime dateTime, CancellationToken cancellationToken = default)
+
+        public async Task<List<ViewPre7DayStatusResponse>> GetPrevious7DayStatus(Guid rollCallId, Guid studentId, DateTime dateTime, CancellationToken cancellationToken = default)
         {
             var result = await _applicationDbContext.AttendanceStudents
                 .Include(al => al.AttendanceLog)
-                .AsSplitQuery().Where(r => r.AttendanceLog != null && DateTime.Compare(r.AttendanceLog.AttendanceDate, dateTime) < 0 && r.StudentId == studentId).Take(7).ToListAsync(cancellationToken);
+                .AsSplitQuery().Where(r => r.AttendanceLog != null && DateTime.Compare(r.AttendanceLog.AttendanceDate, dateTime) < 0 && r.StudentId == studentId && r.AttendanceLog.RollCallId==rollCallId).Take(7).ToListAsync(cancellationToken);
             return result.Select(x => new ViewPre7DayStatusResponse()
             {
                 AttendanceDate = x.AttendanceLog.AttendanceDate.ToString("d"),
                 AttendanceTime = x.AttendanceLog.AttendanceTime,
                 Status = x.IsPresent
             }).ToList();
+        }
+
+        public async Task<int> GetAbsentDaysOfStudent(Guid rollCallId, Guid studentId,DateTime dateTimeRequest, CancellationToken cancellationToken = default)
+        {
+            return await _applicationDbContext.AttendanceStudents
+                .Include(al => al.AttendanceLog)
+                .AsSplitQuery().CountAsync(r => r.AttendanceLog != null && r.IsPresent == false && r.AttendanceLog.RollCallId == rollCallId && r.StudentId == studentId && DateTime.Compare(r.AttendanceLog.AttendanceDate,dateTimeRequest) < 0, cancellationToken);
         }
     }
 }

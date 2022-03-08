@@ -1,0 +1,171 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Application.Common.Models;
+using AttendanceStudent.AttendanceLogImages.Interfaces;
+using AttendanceStudent.Commons;
+using AttendanceStudent.Commons.Extensions;
+using AttendanceStudent.Commons.Interfaces;
+using AttendanceStudent.Database.Configurations;
+using AttendanceStudent.File.DTO.Responses;
+using AttendanceStudent.File.Interfaces;
+using AttendanceStudent.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using ActionResult = AttendanceStudent.Commons.Models.ActionResult;
+
+namespace AttendanceStudent.AttendanceLogImages.Services
+{
+    public class AttendanceLogImageManagementService : IAttendanceLogImageManagementService
+    {
+        private readonly ResourceConfiguration _resourceConfiguration;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IStringLocalizationService _localizationService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="resourceConfiguration"></param>
+        /// <param name="unitOfWork"></param>
+        /// <param name="localizationService"></param>
+        /// <param name="webHostEnvironment"></param>
+        public AttendanceLogImageManagementService(IOptions<ResourceConfiguration> resourceConfiguration, IUnitOfWork unitOfWork, IStringLocalizationService localizationService, IWebHostEnvironment webHostEnvironment)
+        {
+            _unitOfWork = unitOfWork;
+            _localizationService = localizationService;
+            _webHostEnvironment = webHostEnvironment;
+            _resourceConfiguration = resourceConfiguration.Value;
+        }
+        
+        public async Task<Result<ActionResult>> DeleteAttendanceLogImageAsync(Guid resourceId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Find resource by name in the db
+                var resource = await _unitOfWork.Files.GetFileByIdAsync(resourceId, cancellationToken);
+                if (resource == null)
+                    return Result<ActionResult>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
+
+                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath, resource.Name);
+                // Make sure file is existed, if not PhysicalFileResult with throw exception which we cannot catch in this code block due to Middleware is handling itself.
+                if (!System.IO.File.Exists(filePath))
+                    return Result<ActionResult>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
+
+                _unitOfWork.Files.Remove(resource);
+                System.IO.File.Delete(filePath);
+                var result = await _unitOfWork.CompleteAsync(cancellationToken);
+                return result <= 0 ? Result<ActionResult>.Fail(Constants.CannotFinishRequest) : Result<ActionResult>.Succeed();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<PhysicalFileResult?> ServeLogImageAsync(string fileName, CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Find resource by name in the db
+                var resource = await _unitOfWork.AttendanceLogImages.GetLogImageByNameAsync(fileName, cancellationToken);
+
+                if (resource == null)
+                    return null;
+
+                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadAttendanceImageFolderPath, resource.Name);
+                // Make sure file is existed, if not PhysicalFileResult with throw exception which we cannot catch in this code block due to Middleware is handling itself.
+                if (!System.IO.File.Exists(filePath))
+                    return null;
+
+                // Allow browser to know len of file
+                var result = new PhysicalFileResult(filePath, resource.ContentType) {EnableRangeProcessing = true, FileDownloadName = resource.OriginalName};
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<Result<ViewStudentImageByStudentIdResponse>> GetStudentImagesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Find resource by name in the db
+                var student = await _unitOfWork.Students.GetStudentByIdAsync(studentId, cancellationToken);
+                if (student == null)
+                    return Result<ViewStudentImageByStudentIdResponse>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
+
+                var result = new ViewStudentImageByStudentIdResponse()
+                {
+                    StudentId = studentId,
+                    StudentName = student.FullName,
+                    DictionaryPath = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath),
+                    StudentImages = student.Images.Select(cs => new ViewFileResponse()
+                    {
+                        Id = cs.Id,
+                        OriginalName = cs.OriginalName,
+                        Name = cs.OriginalName,
+                        ContentType = cs.ContentType,
+                        Size = cs.Size,
+                        Path = Path.Combine("https://localhost:5001/File/", cs.Name)
+                    }).ToList()
+                };
+
+                // Make sure file is existed, if not PhysicalFileResult with throw exception which we cannot catch in this code block due to Middleware is handling itself.
+                foreach (var path in student.Images.Select(item => Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath, item.Name)).Where(path => !System.IO.File.Exists(path)))
+                {
+                    Result<ViewStudentImageByStudentIdResponse>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
+                }
+
+                return Result<ViewStudentImageByStudentIdResponse>.Succeed(result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+
+        public async Task<Result<List<ViewStudentImageResponse>>> GetStudentImagesAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Find resource by name in the db
+                var resource = await _unitOfWork.Files.GetAllFileAsync(cancellationToken);
+                var result = resource.GroupBy(r => r.Student, (k, c) => new ViewStudentImageResponse()
+                {
+                    StudentId = k.Id,
+                    StudentName = k.FullName,
+                    DictionaryPath = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath),
+                    StudentImagePaths = c.Select(cs => Path.Combine("https://localhost:5001/File/", cs.Name)).ToList()
+                }).ToList();
+
+                // Make sure file is existed, if not PhysicalFileResult with throw exception which we cannot catch in this code block due to Middleware is handling itself.
+                foreach (var item in resource)
+                {
+                    var path = Path.Combine(_webHostEnvironment.ContentRootPath, _resourceConfiguration.UploadFolderPath, item.Name);
+                    if (!System.IO.File.Exists(path))
+                        Result<List<ViewStudentImageResponse>>.Fail(_localizationService[LocalizationString.File.NotFound].Value.ToErrors(_localizationService));
+                }
+
+                return Result<List<ViewStudentImageResponse>>.Succeed(result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+    }
+}

@@ -19,14 +19,24 @@ namespace AttendanceStudent.Attendance.Repositories.Interfaces
         Task<Models.AttendanceLog?> GetAttendanceLogByIdAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
-        /// Get attendance log by date
+        /// Get previous 7 day status 
         /// </summary>
-        /// <param name="attendanceLogId"></param>
+        /// <param name="rollCallId"></param>
         /// <param name="studentId"></param>
         /// <param name="dateTime"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
 
-        Task<List<ViewPre7DayStatusResponse>> GetPrevious7DayStatus(Guid attendanceLogId,Guid studentId,DateTime dateTime, CancellationToken cancellationToken = default);
+        Task<List<ViewPre7DayStatusResponse>> GetPrevious7DayStatus(Guid rollCallId,Guid studentId,DateTime dateTime, CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Get total absent day of student by time request
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="dateTimeRequest"></param>
+        /// <param name="studentId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<int> GetAbsentDaysOfStudent(Guid rollCallId,Guid studentId,DateTime dateTimeRequest, CancellationToken cancellationToken = default);
     }
 }

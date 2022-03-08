@@ -196,20 +196,43 @@ namespace AttendanceStudent.Attendance.Services
                     {
                         StudentId = item.StudentId,
                         StudentName = item.Student?.FullName ?? string.Empty,
+                        StudentCode = item.Student?.StudentCode ?? string.Empty,
                         IsPresent = item.IsPresent,
                         Note = item.Note,
-                        Previous7DayStatus = await _unitOfWork.AttendanceLogs.GetPrevious7DayStatus(existedAttendanceLog.Id, item.StudentId, existedAttendanceLog.AttendanceDate, cancellationToken),
+                        TotalAbsent = await _unitOfWork.AttendanceLogs.GetAbsentDaysOfStudent(existedAttendanceLog.RollCallId, item.StudentId,existedAttendanceLog.AttendanceDate, cancellationToken),
+                        Previous7DayStatus = await _unitOfWork.AttendanceLogs.GetPrevious7DayStatus(existedAttendanceLog.RollCallId, item.StudentId, existedAttendanceLog.AttendanceDate, cancellationToken),
                     });
                 }
 
                 return Result<AttendanceLogResponse>.Succeed(new AttendanceLogResponse()
                 {
                     Id = existedAttendanceLog.Id,
+                    Class = existedAttendanceLog.RollCall?.Class?.Name ?? string.Empty,
+                    Subject = existedAttendanceLog.RollCall?.Subject?.Name ?? string.Empty,
                     AttendanceDate = existedAttendanceLog.AttendanceDate.ToString("d"),
                     AttendanceTime = existedAttendanceLog.AttendanceTime,
-                    LogImagePaths = (existedAttendanceLog.LogImages ?? new List<AttendanceLogImage>()).Select(li => Path.Combine("https://localhost:5001/File/", li.Name)).ToList(),
+                    LogImagePaths = (existedAttendanceLog.LogImages ?? new List<AttendanceLogImage>()).Select(li => Path.Combine("https://localhost:5001/Attendance/Image", li.Name)).ToList(),
                     AttendanceStudents = attendanceStudentList,
                 });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<Result<ActionResult>> DeleteAttendanceLogAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                var existedAttendanceLog = await _unitOfWork.AttendanceLogs.GetAttendanceLogByIdAsync(id, cancellationToken);
+                if (existedAttendanceLog == null)
+                    return Result<ActionResult>.Fail(LocalizationString.AttendanceLog.NotFound.ToErrors(_localizationService));
+
+                _unitOfWork.AttendanceLogs.Remove(existedAttendanceLog);
+                var result = await _unitOfWork.CompleteAsync(cancellationToken);
+                return result > 0 ? Result<ActionResult>.Succeed() : Result<ActionResult>.Fail(Constants.CannotFinishRequest);
             }
             catch (Exception e)
             {

@@ -191,7 +191,16 @@ namespace AttendanceStudent.Commons
             public static Guid TenantAdminPermission = Guid.Parse("49e3275a-d497-4b45-bbcb-3214f3769d9e");
             //public static Guid TenantUser = Guid.Parse("49e3275a-d497-4b45-bbcb-3214f3769d6e");
         }
-
+        
+        public static class Others
+        {
+            public const string DateTimeFormat = "yyyy/MM/dd";
+            public const string ExcelFileDateTimeFormat = "yyyyMMddHHMMssfff";
+            public const string JsonDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
+            public const string PermissionClaimType = "Permission";
+            public const bool AutoIncrementEnabled = true;
+        }
+        
         public static class BackgroundService
         {
             public static class Queue

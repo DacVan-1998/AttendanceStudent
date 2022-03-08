@@ -9,6 +9,8 @@ namespace AttendanceStudent.Attendance.DTO.Responses
     public class AttendanceLogResponse
     {
         public Guid Id { get; set; }
+        public string Class { get; set; } = "";
+        public string Subject { get; set; } = "";
         public string AttendanceDate { get; set; } = "";
         public string AttendanceTime { get; set; } = "";
         public string PresentRate { get; set; } = "";

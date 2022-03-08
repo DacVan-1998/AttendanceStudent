@@ -18,6 +18,7 @@ namespace AttendanceStudent.Database
         public DbSet<StudentImage> Images { get; set; }
         public DbSet<Models.RollCall> RollCalls { get; set; }
         public DbSet<Models.AttendanceStudent> AttendanceStudents { get; set; }
+        public DbSet<AttendanceLogImage> AttendanceLogImages { get; set; }
         public DatabaseFacade Database => base.Database;
 
         public ApplicationDbContext([NotNull] DbContextOptions options) : base(options)

@@ -51,5 +51,13 @@ namespace AttendanceStudent.Attendance.Interfaces
         /// <returns></returns>
         Task<Result<AttendanceLogResponse>> ViewAttendanceLogAsync(Guid attendanceLogId, CancellationToken cancellationToken = default(CancellationToken));
         
+        /// <summary>
+        /// Delete Attendance Log by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<ActionResult>> DeleteAttendanceLogAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken));
+
     }
 }

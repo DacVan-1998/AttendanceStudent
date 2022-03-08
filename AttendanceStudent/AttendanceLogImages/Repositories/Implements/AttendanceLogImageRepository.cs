@@ -17,5 +17,10 @@ namespace AttendanceStudent.AttendanceLogImages.Repositories.Implements
         {
             _applicationDbContext = applicationDbContext;
         }
+
+        public async Task<AttendanceLogImage?> GetLogImageByNameAsync(string name, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await _applicationDbContext.AttendanceLogImages.FirstOrDefaultAsync(r => r.Name == name, cancellationToken);
+        }
     }
 }

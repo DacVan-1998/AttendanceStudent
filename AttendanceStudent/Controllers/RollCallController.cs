@@ -105,7 +105,7 @@ namespace AttendanceStudent.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{rollCallId}")]
-        public async Task<IActionResult> ViewSubjectAsync(Guid rollCallId, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> ViewRollCallAsync(Guid rollCallId, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
@@ -212,6 +212,52 @@ namespace AttendanceStudent.Controllers
                 if (result.Succeeded)
                     return Ok(new SuccessResponse(data: result.Data));
                 return Accepted(new FailureResponse(result.Errors));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Export report Roll Call
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ExportRollCall/{rollCallId:guid}")]
+        public async Task<IActionResult> ExportRollCallAsync(Guid rollCallId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                var result = await _rollCallService.ExportRollCallAsync(rollCallId, cancellationToken);
+                if (result.Succeeded)
+                    return Ok(new SuccessResponse(data: result.Data));
+                return Accepted(new FailureResponse(result.Errors));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// To download the export file.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("DownloadExportFile/{fileName}")]
+        public async Task<IActionResult> DownloadExportFileAsync(string fileName, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _rollCallService.DownloadExportFileAsync(fileName, cancellationToken);
+                if (result == null)
+                    return Accepted();
+                return result;
             }
             catch (Exception e)
             {

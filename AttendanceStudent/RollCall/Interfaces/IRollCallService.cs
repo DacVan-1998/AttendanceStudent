@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Application.Common.DTO.Pagination.Requests;
 using Application.Common.Models;
 using AttendanceStudent.Commons.DTO.Pagination.Responses;
-using AttendanceStudent.Commons.Models;
 using AttendanceStudent.RollCall.DTO.Requests;
 using AttendanceStudent.RollCall.DTO.Responses;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using ActionResult = AttendanceStudent.Commons.Models.ActionResult;
 
 namespace AttendanceStudent.RollCall.Interfaces
 {
@@ -81,6 +82,16 @@ namespace AttendanceStudent.RollCall.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<Result<ActionResult>> ImportStudentToRollCallAsync(Guid rollCallId,IFormFile  excelFile, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Export Roll Call 
+        /// </summary>
+        /// <param name="rollCallId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<ExportRollCallResponse>> ExportRollCallAsync(Guid rollCallId, CancellationToken cancellationToken = default(CancellationToken));
+        
+        public Task<PhysicalFileResult> DownloadExportFileAsync(string fileName, CancellationToken cancellationToken = default(CancellationToken));
 
     }
 }
