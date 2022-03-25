@@ -23,9 +23,11 @@ namespace AdminApp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [Route("Abc")]
+        public IActionResult Privacy([FromQuery] string idStudent)
         {
-            return View();
+            var id = idStudent;
+            return View("Privacy", id);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -33,5 +35,7 @@ namespace AdminApp.Controllers
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
+
+
     }
 }

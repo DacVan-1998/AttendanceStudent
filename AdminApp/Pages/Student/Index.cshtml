@@ -20,7 +20,7 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-md-6 col-xs-12">
-                    <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Add</button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Thêm mới</button>
                 </div>
                 <div class="col-md-6 col-xs-12">
                     <div class="row">
@@ -43,22 +43,22 @@
                             #
                         </th>
                         <th>
-                            Student Code
+                           Mã số sinh viên
                         </th>
                         <th>
-                            Student Name
+                            Tên sinh viên
                         </th>
                         <th>
                             Email
                         </th>
                         <th>
-                            Phone Number
+                            Số điện thoại
                         </th>
                         <th>
-                            Images
+                            Ảnh
                         </th>
                         <th>
-                            Action
+                            Hành động
                         </th>
                     </tr>
                     </thead>
@@ -79,7 +79,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Add or Update Student</h4>
+                        <h4 class="modal-title" id="myModalLabel">Thêm mới hoặc cập nhật sinh nhật</h4>
                     </div>
                     <div class="modal-body">
                         <form>
@@ -88,11 +88,11 @@
                                 <input type="text" class="form-control" id="StudentId" placeholder="Id"/>
                             </div>
                             <div class="form-group">
-                                <label for="Code">Student Code</label>
+                                <label for="Code">Mã số sinh viên</label>
                                 <input type="text" class="form-control" id="Code" placeholder="Code"/>
                             </div>
                             <div class="form-group">
-                                <label for="Name">Student Name</label>
+                                <label for="Name">Tên sinh viên</label>
                                 <input type="text" class="form-control" id="Name" placeholder="Name"/>
                             </div>
                             <div class="form-group">
@@ -100,15 +100,15 @@
                                 <input type="text" class="form-control" id="Email" placeholder="Email"/>
                             </div>
                             <div class="form-group">
-                                <label for="PhoneNumber">Phone Number</label>
+                                <label for="PhoneNumber">Số điện thoại</label>
                                 <input type="text" class="form-control" id="PhoneNumber" placeholder="Phone Number"/>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Add</button>
-                        <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Update</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Thêm</button>
+                        <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Cập nhật</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="hideDialog()">Đóng</button>
                     </div>
                 </div>
             </div>
@@ -144,7 +144,10 @@ function openDialogForAdd(){
     $('#myModal').modal('show');
     $('#divClassId').hide();
 }
-
+function hideDialog()
+{
+   $('#myModal').modal('hide');
+}
 //Load Data function
 function getPageData(pageNum, pageSize) {
     $('#ipSearch').val("");
@@ -167,8 +170,8 @@ function getPageData(pageNum, pageSize) {
                 html += '<td>' + item.fullName + '</td>';
                 html += '<td>' + item.email + '</td>';
                 html += '<td>' + item.phoneNumber + '</td>';
-                html += '<td><a class="btn btn-success" href="StudentImages?StudentId='+item.id+'" role="button">'+item.totalImages+' images</a></td>';
-                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button>  | <button type="button" class="btn btn-danger" onclick="deleteStudent(\''+item.id+'\')">Delete</button></td>';
+                html += '<td><a class="btn btn-success" href="StudentImages?StudentId='+item.id+'" role="button">'+item.totalImages+' ảnh</a></td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Sửa</button>  | <button type="button" class="btn btn-danger" onclick="deleteStudent(\''+item.id+'\')">Xóa</button></td>';
                 html += '</tr>';
             });
             $('#tblData').html(html);
@@ -202,8 +205,8 @@ function search() {
                 html += '<td>' + item.fullName + '</td>';
                 html += '<td>' + item.email + '</td>';
                 html += '<td>' + item.phoneNumber + '</td>';
-                html += '<td><a class="btn btn-primary" href="StudentImages?StudentId='+item.id+'" role="button">'+item.totalImages+' images</a></td>';
-                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button>  | <button type="button" class="btn btn-danger" onclick="deleteStudent(\''+item.id+'\')">Delete</button></td>';
+                html += '<td><a class="btn btn-success" href="StudentImages?StudentId='+item.id+'" role="button">'+item.totalImages+' ảnh</a></td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Sửa</button>  | <button type="button" class="btn btn-danger" onclick="deleteStudent(\''+item.id+'\')">Xóa</button></td>';
                 html += '</tr>';
             });
             $('#tblData').html(html);
@@ -235,8 +238,10 @@ function add() {
         success: function () {
             getPageData(1,10);
             $('#myModal').modal('hide');
+            Toastify({text: "Thêm sinh viên thành công!",}).showToast();
         },
         error: function (errormessage) {
+            Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
             alert(errormessage.responseText);
         }
     });
@@ -300,8 +305,10 @@ function update() {
             $('#Code').val("");
             $('#Email').val("");
             $('#PhoneNumber').val("");
+            Toastify({text: "Cập nhật thông tin sinh viên thành công!",}).showToast();
         },
         error: function (errormessage) {
+            Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
             alert(errormessage.responseText);
         }
     });
@@ -309,7 +316,7 @@ function update() {
 
 //function for deleting employee's record
 function deleteStudent(ID) {
-    var ans = confirm("Are you sure you want to delete this Record?");
+    var ans = confirm("Bạn chắc chắn muốn xóa bản ghi này không?");
     if (ans) {
         $.ajax({
         url: "https://localhost:5001/Student/" + ID,
@@ -318,8 +325,10 @@ function deleteStudent(ID) {
             dataType: "json",
             success: function (result) {
                 getPageData(1,10);
+                Toastify({text: "Xóa bản ghi thành công!",}).showToast();
             },
             error: function (errormessage) {
+                Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
                 alert(errormessage.responseText);
             }
         });

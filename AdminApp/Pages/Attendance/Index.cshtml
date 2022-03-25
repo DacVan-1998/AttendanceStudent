@@ -149,10 +149,7 @@ function CallAttendanceStudentApi(attendanceLogId) {
              contentType: false,
              processData: false,
              success: function(data){
-                 //Create attendance log success
-                if (data.data.status === "200"){
-                    CallAttendanceStudentApi()
-                }
+                 Toastify({text: "Điểm danh thành công !",}).showToast();     
              },
              error: function (data) {
         

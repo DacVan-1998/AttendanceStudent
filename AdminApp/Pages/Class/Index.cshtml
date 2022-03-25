@@ -19,7 +19,7 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-md-6 col-xs-12">
-                    <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Add</button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" onclick="openDialogForAdd()" id="btnCreateNew">Thêm</button>
                 </div>
                 <div class="col-md-6 col-xs-12">
                     <div class="row">
@@ -42,13 +42,13 @@
                             #
                         </th>
                         <th>
-                            Class Code
+                            Mã lớp
                         </th>
                         <th>
-                            Class Name
+                            Tên lớp
                         </th>
                         <th>
-                            Action
+                            Hành động
                         </th>
                     </tr>
                     </thead>
@@ -65,7 +65,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Add or Update Class</h4>
+                        <h4 class="modal-title" id="myModalLabel">Thêm mới hoặc cập nhật</h4>
                     </div>
                     <div class="modal-body">
                         <form>
@@ -74,19 +74,19 @@
                                 <input type="text" class="form-control" id="ClassId" placeholder="Id"/>
                             </div>
                             <div class="form-group">
-                                <label for="Name">Name</label>
+                                <label for="Name">Tên lớp</label>
                                 <input type="text" class="form-control" id="Name" placeholder="Name"/>
                             </div>
                             <div class="form-group">
-                                <label for="Code">Code</label>
+                                <label for="Code">Mã lớp</label>
                                 <input type="text" class="form-control" id="Code" placeholder="Code"/>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Add</button>
-                        <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Update</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="btnAdd" onclick="add();">Thêm</button>
+                        <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="update();">Cập nhật</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                     </div>
                 </div>
             </div>
@@ -128,7 +128,7 @@ function loadData() {
                 html += '<th scope="row">' + count + '</th>';
                 html += '<td>' + item.code + '</td>';
                 html += '<td>' + item.name + '</td>';
-                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button> | <button type="button" class="btn btn-danger" onclick="deleteClass(\''+item.id+'\')">Delete</button></td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Sửa</button> | <button type="button" class="btn btn-danger" onclick="deleteClass(\''+item.id+'\')">Xóa</button></td>';
                 html += '</tr>';
             });
             $('.tbody').html(html);
@@ -158,7 +158,7 @@ function search() {
                 html += '<th scope="row">' + count + '</th>';
                 html += '<td>' + item.code + '</td>';
                 html += '<td>' + item.name + '</td>';
-                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Edit</button> | <button type="button" class="btn btn-danger" onclick="deleteClass(\''+item.id+'\')">Delete</button></td>';
+                html += '<td><button type="button" class="btn btn-info" onclick="getByID(\''+item.id+'\')">Sửa</button> | <button type="button" class="btn btn-danger" onclick="deleteClass(\''+item.id+'\')">Xóa</button></td>';
                 html += '</tr>';
             });
             $('.tbody').html(html);
@@ -187,8 +187,11 @@ function add() {
         success: function (result) {
             loadData();
             $('#myModal').modal('hide');
+            Toastify({text: "Thêm mới lớp học thành công!",}).showToast();
+
         },
         error: function (errormessage) {
+            Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
             alert(errormessage.responseText);
         }
     });
@@ -245,8 +248,10 @@ function update() {
             $('#ClassId').val("");
             $('#Name').val("");
             $('#Code').val("");
+            Toastify({text: "Cập nhật bản ghi thành công!",}).showToast();
         },
         error: function (errormessage) {
+            Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
             alert(errormessage.responseText);
         }
     });
@@ -254,7 +259,7 @@ function update() {
 
 //function for deleting employee's record
 function deleteClass(ID) {
-    var ans = confirm("Are you sure you want to delete this Record?");
+    var ans = confirm("Bạn có chắc muốn xóa bản ghi này không?");
     if (ans) {
         $.ajax({
         url: "https://localhost:5001/Class/" + ID,
@@ -263,8 +268,10 @@ function deleteClass(ID) {
             dataType: "json",
             success: function (result) {
                 loadData();
+                Toastify({text: "Xóa lớp học thành công!",}).showToast();
             },
             error: function (errormessage) {
+                Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
                 alert(errormessage.responseText);
             }
         });

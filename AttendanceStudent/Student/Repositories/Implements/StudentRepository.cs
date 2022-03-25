@@ -65,9 +65,10 @@ namespace AttendanceStudent.Student.Repositories.Implements
             await Task.CompletedTask;
             var keyword = query.Keyword?.ToUpper() ?? string.Empty;
             return _applicationDbContext.Students
-                .Include(s => s.Images)
+                .Include(st => st.Images)
                 .Where(r => keyword.Length == 0 || r.StudentCode.Contains(keyword) || r.FullName.Contains(keyword))
-                .AsSplitQuery();
+                .AsSplitQuery().AsQueryable();
+            ;
         }
 
         public async Task<List<Models.Student>?> GetStudentsAsync(List<Guid> studentIds, CancellationToken cancellationToken = default(CancellationToken))

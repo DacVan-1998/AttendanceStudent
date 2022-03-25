@@ -109,14 +109,14 @@ namespace AttendanceStudent.Attendance.Services
             }
         }
 
-        public async Task<Result<ActionResult>> AttendanceStudentsAsync(Guid attendanceLogId, CreateAttendanceStudentsRequest request, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<Result<AttendanceResponse>> AttendanceStudentsAsync(Guid attendanceLogId, CreateAttendanceStudentsRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
                 var listStudentIds = new List<Guid>(request.Students.Distinct());
                 var existedAttendanceLog = await _unitOfWork.AttendanceLogs.GetAttendanceLogByIdAsync(attendanceLogId, cancellationToken);
                 if (existedAttendanceLog == null)
-                    return Result<ActionResult>.Fail(LocalizationString.AttendanceLog.NotFound.ToErrors(_localizationService));
+                    return Result<AttendanceResponse>.Fail(LocalizationString.AttendanceLog.NotFound.ToErrors(_localizationService));
 
                 //Check input students list must be existed in student list of roll call in the db
                 foreach (var item in request.Students.Where(item => existedAttendanceLog.RollCall != null && existedAttendanceLog.RollCall.StudentRollCalls.All(x => x.StudentId != item)))
@@ -124,6 +124,7 @@ namespace AttendanceStudent.Attendance.Services
                 // return Result<ActionResult>.Fail(string.Format(LocalizationString.RollCall.NotExist, item).ToErrors(_localizationService));
 
                 // Attendance present for input student ids list 
+                var totalStudentAttendanced = 0;
                 if (existedAttendanceLog.RollCall != null)
                 {
                     var attendanceStudentCreateList = existedAttendanceLog.RollCall.StudentRollCalls.Select(item => new Models.AttendanceStudent()
@@ -133,13 +134,16 @@ namespace AttendanceStudent.Attendance.Services
                         IsPresent = listStudentIds.Any(x => x == item.StudentId),
                         Note = string.Empty
                     }).ToList();
-
                     existedAttendanceLog.AttendanceStudents = attendanceStudentCreateList;
+                    totalStudentAttendanced = attendanceStudentCreateList.Count(x => x.IsPresent);
                 }
 
                 _unitOfWork.AttendanceLogs.Update(existedAttendanceLog);
                 var result = await _unitOfWork.CompleteAsync(cancellationToken);
-                return result > 0 ? Result<ActionResult>.Succeed() : Result<ActionResult>.Fail(Constants.CannotFinishRequest);
+                return result > 0 ? Result<AttendanceResponse>.Succeed(new AttendanceResponse()
+                {
+                    TotalStudentAttendanced = totalStudentAttendanced
+                }) : Result<AttendanceResponse>.Fail(Constants.CannotFinishRequest);
             }
             catch (Exception e)
             {

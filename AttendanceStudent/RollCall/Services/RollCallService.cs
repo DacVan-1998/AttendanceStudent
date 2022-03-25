@@ -139,7 +139,7 @@ namespace AttendanceStudent.RollCall.Services
                         Code = existedRollCall.Subject?.Code ?? string.Empty,
                         Name = existedRollCall.Subject?.Name ?? string.Empty,
                     },
-                    AttendanceLogs = existedRollCall.AttendanceLogs.Select(x => new AttendanceLogResponse()
+                    AttendanceLogs = existedRollCall.AttendanceLogs.OrderByDescending(x=>x.AttendanceDate).Select(x => new AttendanceLogResponse()
                     {
                         Id = x.Id,
                         AttendanceDate = x.AttendanceDate.ToString("d"),
@@ -332,8 +332,10 @@ namespace AttendanceStudent.RollCall.Services
                     var excel = new ExcelPackage(fileStream);
                     var workSheet = excel.Workbook.Worksheets.FirstOrDefault();
 
-                    var newCollectionStudentDto = workSheet.ConvertSheetToObjects<StudentConvertExcelDto>();
-                    studentList = newCollectionStudentDto.Select(x => new Models.Student()
+                    var studentConvertExcelDtos = workSheet.ConvertSheetToObjects<StudentConvertExcelDto>();
+                    var newStudentConvertDto = studentConvertExcelDtos.ToList();
+                    newStudentConvertDto.RemoveAll(x => x.Email == null);
+                    studentList = newStudentConvertDto.Select(x => new Models.Student()
                     {
                         Id = Guid.NewGuid(),
                         StudentCode = x.StudentCode,
@@ -413,7 +415,8 @@ namespace AttendanceStudent.RollCall.Services
 
                 var attendanceRecordIndex = 2;
                 var columnAttendanceDateNumber = 5;
-                foreach (var item in rollCall.AttendanceLogs)
+                var  attendanceLogs = rollCall.AttendanceLogs.OrderBy(x => x.AttendanceDate);
+                foreach (var item in attendanceLogs)
                 {
                     //Header of attendance log
                     workSheet.Cells[1, columnAttendanceDateNumber].Value = item.AttendanceDate.ToString(CultureInfo.InvariantCulture).Substring(0, item.AttendanceDate.ToString(CultureInfo.InvariantCulture).LastIndexOf('/'));

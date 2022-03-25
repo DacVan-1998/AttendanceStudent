@@ -316,13 +316,13 @@ function loadData() {
                     attendanceLogHtml += '<td>' + item.attendanceDate + '</td>';
                     attendanceLogHtml += '<td>' + item.attendanceTime + '</td>';
                     attendanceLogHtml += '<td>' + item.presentRate + '</td>';
-                    attendanceLogHtml += '<td style="text-align: center"><button type="button" class="btn btn-success" onclick="getAttendanceByID(\''+item.id+'\')">Chi tiết</button> <button type="button" class="btn btn-danger" onclick="deleteLog(\''+item.id+'\')">Delete</button></td>';
+                    attendanceLogHtml += '<td style="text-align: center"><button type="button" class="btn btn-success" onclick="getAttendanceByID(\''+item.id+'\')">Chi tiết</button> <button type="button" class="btn btn-danger" onclick="deleteLog(\''+item.id+'\')">Xóa</button></td>';
                     attendanceLogHtml += '</tr>';
                 });
 
                 $('#subject').text(data.data.subject.name || "");
                 $('#class').text(data.data.class.name || "");
-                $('#date').text(data.data.fromDate + " to "+ data.data.endDate);
+                $('#date').text(data.data.fromDate + " đến "+ data.data.endDate);
 
                 $('#studentList').html(studentListHtml);
                 $('#attendanceLog').html(attendanceLogHtml);
@@ -463,7 +463,7 @@ function submit() {
             Toastify({text: "Cập nhật thành công",}).showToast();
         },
         error: function (errormessage) {
-            alert(errormessage.responseText);
+              Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
         }
     });
 }      
@@ -486,7 +486,7 @@ function deleteLog(logId) {
                    Toastify({text: "Xóa bản ghi thành công",}).showToast();
                 },
                 error: function (errormessage) {
-                    alert(errormessage.responseText);
+                    Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
                 }
             });
         }
@@ -507,9 +507,10 @@ $(function(){
            processData: false,
            success: function(){
               loadData()
+              Toastify({text: "Import sinh viênthành công",}).showToast();
            },
            error: function (data) {
-
+              Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
                }
            })
     });  

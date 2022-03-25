@@ -306,15 +306,9 @@ function getPageData(pageNum, pageSize) {
                  let student2 = item.students[1] ? item.students[1].fullName.match(/\b[A-Z]/g).join(''):"";
                  let student3 = item.students[2] ? item.students[2].fullName.match(/\b[A-Z]/g).join(''):"";
                  let remainStudent = item.students.length > 3 ? item.students.length-3: 0;
-                console.log(yearFrom,monthFrom,dayFrom);                
-                console.log(yearEnd,monthEnd,dayEnd);              
-                console.log(student1);              
-                console.log(student2);              
-                console.log(student3);              
-                console.log(remainStudent);              
-                
-                html += '<div class="col-6" style="text-align: center">';                                                           
-                html += '<div id="rollCallDetail" class="rollcall-list">';
+               
+                html += '<div class="col-4" style="text-align: center">';                                                           
+                html += ' <div class="rollcall-list">';
                 html += '  <div style="width: 390px">';
                 html += '    <div class="rollcall-item">';
                 html += '       <div class="rollcall-schedule">';
@@ -329,7 +323,7 @@ function getPageData(pageNum, pageSize) {
                 html += '               <span id="month-to">'+monthFrom+'</span>';
                 html += '               <span id="year-to">'+yearFrom+'</span>';
                 html += '          </div>';
-                html += '          To';
+                html += '          Đến';
                 html += '          <span id="day-from" class="event-day">'+dayEnd+'</span>';
                 html += '          <div class="event-month-time">';
                 html += '               <span id="month-from">'+monthEnd+'</span>';
@@ -350,10 +344,10 @@ function getPageData(pageNum, pageSize) {
                 html += '         <a href="https://localhost:4001/RollCall/RollCallDetail?rollCallId=' + item.id + '" class="btn btn-success">Nhật ký</a>';
                 html += '         <button type="button" class="btn btn-success" onclick="exportExcel(\''+item.id+'\')">Xuất Excel</button>';
                 html += '         <button type="button" class="btn btn-danger" onclick="deleteRollCall(\''+item.id+'\')">Xóa</button>';
-                html += '     </ul>';
-                html += '   </div>';
+                html += '     </div>';
                 html += '  </div>';
-                html += '</div>';    
+                html += ' </div>';    
+                html += '</div>';
                 html += '</div>';
             });
             $('#item').html(html);                     
@@ -422,9 +416,11 @@ function add()
         success: function (data) {
              getPageData(1,10);
              $('#myModal').modal('hide');     
+             Toastify({text: "Thêm mới bảng điểm danh thành công!",}).showToast();
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
+            Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
         }
     });
 }
@@ -485,17 +481,19 @@ function update() {
         dataType: "json",
         success: function (result) {
             getPageData(1,10);
-            $('#myModal').modal('hide');     
+            $('#myModal').modal('hide');    
+            Toastify({text: "Cập nhật bảng điểm danh thành công!",}).showToast();
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
+            Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
         }
     });
 }
 
 //function for deleting employee's record
 function deleteRollCall(ID) {
-    var ans = confirm("Are you sure you want to delete this Record?");
+    var ans = confirm("Bạn có chắc muốn xóa bản ghi này không?");
     if (ans) {
         $.ajax({
         url: "https://localhost:5001/RollCall/" + ID,
@@ -504,9 +502,11 @@ function deleteRollCall(ID) {
             dataType: "json",
             success: function (result) {
                 getPageData(1,10);
+                Toastify({text: "Xóa bảng điểm danh thành công!",}).showToast();
             },
             error: function (errormessage) {
                 alert(errormessage.responseText);
+                Toastify({text: "Đã có lỗi xảy ra. Vui lòng thử lại!",}).showToast();
             }
         });
     }

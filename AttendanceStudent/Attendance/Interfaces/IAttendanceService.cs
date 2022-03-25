@@ -32,7 +32,7 @@ namespace AttendanceStudent.Attendance.Interfaces
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<Result<ActionResult>> AttendanceStudentsAsync(Guid attendanceLogId,CreateAttendanceStudentsRequest request, CancellationToken cancellationToken = default(CancellationToken));
+        Task<Result<AttendanceResponse>> AttendanceStudentsAsync(Guid attendanceLogId,CreateAttendanceStudentsRequest request, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Update attendance students  

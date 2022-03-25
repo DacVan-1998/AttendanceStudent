@@ -13,10 +13,11 @@
         </li>
         <li class="breadcrumb-item active">Sinh viên</li>
         <li class="breadcrumb-item active">Ảnh sinh viên</li>
+        <li id="studentName" class="breadcrumb-item active"></li>
     </ol>
     <div class="card mb-12">
         <div class="card-header" id="title-student-image">
-            Image Data
+            Dữ liệu ảnh
         </div>
         <div class="card-body">
             <div id="pop-images">
@@ -25,14 +26,14 @@
     </div>
     <div class="card mb-12">
         <div class="card-header">
-            Upload
+            Tải ảnh
         </div>
         <div class="card-body display-flex" >
             <div style="margin-right: 20px" class="custom-file">
                 <input class="form-control" type="file" id="formFileMultiple" multiple>
             </div>
             <button type="button" name="submit" class="btn btn-success btn-block" id="btnUploadFile" onclick="uploadFile()">
-                Upload Files
+                Tải ảnh
             </button>
         </div>
 
@@ -63,6 +64,7 @@ function loadStudentImages() {
                 html += '</div>' ;            
             });
             $('#pop-images').html(html);
+            $('#studentName').text(data.data.studentName)
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
@@ -72,7 +74,7 @@ function loadStudentImages() {
 
 //function for deleting employee's record
 function deleteStudentImage(imageId) {
-    const ans = confirm("Are you sure you want to delete this Record?");
+    const ans = confirm("Bạn có chắc chắn muốn xóa ảnh không?");
     if (ans) {
         $.ajax({
         url: "https://localhost:5001/File/" + imageId,

@@ -120,7 +120,8 @@ namespace AttendanceStudent.Student.Services
                     StudentCode = existedStudent.StudentCode,
                     FullName = existedStudent.FullName,
                     Email = existedStudent.Email,
-                    PhoneNumber = existedStudent.PhoneNumber
+                    PhoneNumber = existedStudent.PhoneNumber,
+                    TotalImages = existedStudent.Images.Count
                 });
             }
             catch (Exception e)
@@ -135,7 +136,7 @@ namespace AttendanceStudent.Student.Services
             try
             {
                 var queryable = await _unitOfWork.Students.SearchStudent(query, cancellationToken);
-                var result = await _paginationService.PaginateAsync(queryable, query.Page, query.OrderBy, query.OrderByDesc, query.Size, cancellationToken);
+                var result = await _paginationService.PaginateWithListAsync(queryable, query.Page, query.OrderBy, query.OrderByDesc, query.Size, cancellationToken);
                 return Result<PaginationBaseResponse<ViewStudentResponse>>.Succeed(new PaginationBaseResponse<ViewStudentResponse>()
                 {
                     CurrentPage = result.CurrentPage,

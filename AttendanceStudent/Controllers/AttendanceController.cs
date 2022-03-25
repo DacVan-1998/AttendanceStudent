@@ -150,7 +150,7 @@ namespace AttendanceStudent.Controllers
             {
                 var result = await _attendanceService.AttendanceStudentsAsync(attendanceLogId, request, cancellationToken);
                 if (result.Succeeded)
-                    return Ok(new SuccessResponse());
+                    return Ok(new SuccessResponse(data:result.Data));
                 return Accepted(new FailureResponse(result.Errors));
             }
             catch (Exception e)

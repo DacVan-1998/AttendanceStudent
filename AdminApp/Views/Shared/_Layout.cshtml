@@ -23,11 +23,15 @@
     <link href="/css/site.css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    @* <style> *@
-    @*     #layoutSidenav{ *@
-    @*         background: url("https://wallpaperaccess.com/full/3480785.jpg"); *@
-    @*     } *@
-    @* </style> *@
+    <script>
+        window.setInterval(ut, 1000);
+        
+        function ut() {
+          var d = new Date();
+          document.getElementById("digitalTime").innerHTML = d.toLocaleTimeString();
+          document.getElementById("digitalDate").innerHTML = d.toLocaleDateString();
+        }
+    </script>
 </head>
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -39,11 +43,10 @@
     </button>
     <!-- Navbar Search-->
     <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-        <div class="input-group">
-            <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch"/>
-            <button class="btn btn-primary" id="btnNavbarSearch" type="button">
-                <i class="fas fa-search"></i>
-            </button>
+        <div class="input-group" style="color: white">
+            <p id="digitalTime" style="margin: 0"></p>
+            <p style="margin: 0">,</p>
+            <p id="digitalDate" style="margin: 0"></p>
         </div>
     </form>
     <!-- Navbar-->
@@ -52,8 +55,6 @@
             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-user fa-fw"></i>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-            </ul>
         </li>
     </ul>
 </nav>
@@ -62,11 +63,11 @@
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div class="sb-sidenav-menu">
                 <div class="nav">
-                    <a class="nav-link" href="http://localhost:5500/index.html">
+                    <a class="nav-link" href="http://localhost:5500/index.html" target="_blank">
                         <div class="sb-nav-link-icon">
                             <i class="fas fa-edit"></i>
                         </div>
-                        Điểm danh
+                        Điểm danh sinh viên
                     </a>
                     <a class="nav-link collapsed" href="https://localhost:4001/Student">
                         <div class="sb-nav-link-icon">
@@ -97,7 +98,7 @@
         </nav>
     </div>
     <div id="layoutSidenav_content">
-        <main class="main" >
+        <main class="main">
             @RenderBody()
         </main>
         <footer class="py-4 bg-light mt-auto">
